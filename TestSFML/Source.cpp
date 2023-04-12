@@ -64,8 +64,8 @@ void drawGrid(RenderWindow& window, int grid[size][size], bool isPlayerGrid) {
 }
 
 int main() {
-    RenderWindow window(VideoMode(size * cellSize * 2.5, size * cellSize), "Battleships");
-
+    RenderWindow window(VideoMode(size * cellSize * 2.5, size * cellSize), "Battleships", sf::Style::Titlebar | sf::Style::Close);
+    window.setFramerateLimit(60);
     // инициализируем поле игрока и компьютера
     for (int x = 0; x < size; x++) {
         for (int y = 0; y < size; y++) {
