@@ -5,7 +5,8 @@ using namespace sf;
 
 const int cellSize = 50; // размер €чеек
 const int size = 10; // размер пол€
-
+int win = 0;
+int lose = 0;
 
 int playerGrid[size][size]; // игровое поле игрока
 int computerGrid[size][size]; // игровое поле компьютера
@@ -106,6 +107,7 @@ int main() {
                 int y = event.mouseButton.y / cellSize;
                 if (computerGrid[x][y] == 1) { // попал
                     computerGrid[x][y] = 3;
+                    win += 1;
                 }
                 else if (computerGrid[x][y] == 3) {
                     computerGrid[x][y] = 3;
@@ -135,11 +137,20 @@ int main() {
             }
             if (playerGrid[x][y] == 1) { // попал
                 playerGrid[x][y] = 3;
+                lose += 1;
             }
             else { // промах
                 playerGrid[x][y] = 2;
                 isPlayerTurn = true;
             }
+        }
+        if (win == 5) {
+            std::cout << "You win!";
+            window.close();
+        }
+        if (lose == 5) {
+            std::cout << "You lost!";
+            window.close();
         }
     }
 
