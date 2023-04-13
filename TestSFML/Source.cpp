@@ -35,6 +35,10 @@ void drawGrid(RenderWindow& window, int grid[size][size], bool isPlayerGrid) {
                     cell.setFillColor(Color::Red);
                     cell.setOutlineColor(Color::Black);
                 }
+                else if (computerGrid[x][y] == 4) { // попадание
+                    cell.setFillColor(Color::Black);
+                    cell.setOutlineColor(Color::Black);
+                }
                 window.draw(cell);
             }
         }
@@ -59,7 +63,687 @@ void drawGrid(RenderWindow& window, int grid[size][size], bool isPlayerGrid) {
                 cell.setFillColor(Color::Red);
                 cell.setOutlineColor(Color::Black);
             }
+            else if (playerGrid[x][y] == 4) { // попадание
+                cell.setFillColor(Color::Black);
+                cell.setOutlineColor(Color::Black);
+            }
             window.draw(cell);
+        }
+    }
+}
+
+void Computer_placement(int b[size][size]) {
+    int l = 0;      //count 4 ships
+    while (l < 1) {
+        int i = rand() % size; int j = rand() % size;
+        b[i][j] = 1;
+        if ((i >= 3 && i <= 6) && (j > 2 && j < 7)) {
+            int v = rand() % 2;
+            if (v == 0) {    //vertical
+                int r = rand() % 2;   //down 0, up 1
+                if (r == 0) {    //down
+                    b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
+                    l += 1;
+                }
+                if (r == 1) {   //up
+                    b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
+                    l += 1;
+                }
+            }
+            if (v == 1) {   //horizont
+                int r = rand() % 2;   //left 0, right 1
+                if (r == 0) {      //left
+                    b[i][j - 1] = 1; b[i][j - 2] = 1; b[i][j - 3] = 1;
+                    l += 1;
+                }
+                if (r == 1) {   //right
+                    b[i][j + 1] = 1; b[i][j + 2] = 1; b[i][j + 3] = 1;
+                    l += 1;
+                }
+            }
+        }
+        if ((i >= 0 && i <= 6) && (j >= 0 && j <= 2)) {
+            int v = rand() % 2;     //down 0, right 1
+            if (v == 0) {     //down
+                b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
+                l += 1;
+            }
+            if (v == 1) {     //right
+                b[i][j + 1] = 1; b[i][j + 2] = 1; b[i][j + 3] = 1;
+                l += 1;
+            }
+        }
+        if ((i >= 7 && i <= 9) && (j >= 0 && j <= 6)) {
+            int v = rand() % 2;     //up 0, right 1
+            if (v == 0) {     //up
+                b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
+                l += 1;
+            }
+            if (v == 1) {     //right
+                b[i][j + 1] = 1; b[i][j + 2] = 1; b[i][j + 3] = 1;
+                l += 1;
+            }
+        }
+        if ((i >= 3 && i <= 9) && (j >= 7 && j <= 9)) {
+            int v = rand() % 2;     //up 0, left 1
+            if (v == 0) {     //up
+                b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
+                l += 1;
+            }
+            if (v == 1) {     //left
+                b[i][j - 1] = 1; b[i][j - 2] = 1; b[i][j - 3] = 1;
+                l += 1;
+            }
+
+        }
+        if ((i >= 0 && i <= 2) && (j >= 3 && j <= 9)) {
+            int v = rand() % 2;     //down 0, left 1
+            if (v == 0) {     //down
+                b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
+                l += 1;
+            }
+            if (v == 1) {     //left
+                b[i][j - 1] = 1; b[i][j - 2] = 1; b[i][j - 3] = 1;
+                l += 1;
+            }
+        }
+
+
+    }
+    l = 0;      //count 3 ships
+    while (l < 2) {
+        int i = rand() % size; int j = rand() % size;
+        if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
+        else {
+            if (i >= 2 && i <= 7 && j >= 2 && j <= 7) {
+                int v = rand() % 2;     //vertical 0, horizont 1
+                if (v == 0) {    //vertical
+                    int r = rand() % 2;   //down 0, up 1
+                    if (r == 0) {    //down
+                        if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i + 1][j] = 1; b[i + 2][j] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                    if (r == 1) {   //up
+                        if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i - 1][j] = 1; b[i - 2][j] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                }
+                if (v == 1) {   //horizont
+                    int r = rand() % 2;   //left 0, right 1
+                    if (r == 0) {       //left
+                        if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1) or (b[i - 1][j - 3] == 1) or (b[i][j - 3] == 1) or (b[i + 1][j - 3] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i][j - 1] = 1; b[i][j - 2] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                    if (r == 1) {       //right
+                        if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1) or (b[i - 1][j + 3] == 1) or (b[i][j + 3] == 1) or (b[i + 1][j + 3] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i][j + 1] = 1; b[i][j + 2] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                }
+            }
+            if (i >= 0 && i <= 7 && j >= 0 && j <= 1) {
+                int v = rand() % 2;     //down 0, right 1
+                if (v == 0) {   //down
+                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i + 1][j] = 1; b[i + 2][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {   //right
+                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1) or (b[i - 1][j + 3] == 1) or (b[i][j + 3] == 1) or (b[i + 1][j + 3] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j + 1] = 1; b[i][j + 2] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i >= 8 && i <= 9 && j >= 0 && j <= 7) {
+                int v = rand() % 2;     //up 0, right 1
+                if (v == 0) {       //up
+                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i - 1][j] = 1; b[i - 2][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {       //right
+                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1) or (b[i - 1][j + 3] == 1) or (b[i][j + 3] == 1) or (b[i + 1][j + 3] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j + 1] = 1; b[i][j + 2] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i >= 1 && i <= 9 && j >= 8 && j <= 9) {
+                int v = rand() % 2;     //up 0, left 1
+                if (v == 0) {   //up
+                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i - 1][j] = 1; b[i - 2][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {   //left
+                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1) or (b[i - 1][j - 3] == 1) or (b[i][j - 3] == 1) or (b[i + 1][j - 3] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j - 1] = 1; b[i][j - 2] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i >= 0 && i <= 1 && j>=1 && j<=9) {
+                int v = rand() % 2;      //down 0, left 1
+                if (v == 0) {   //down
+                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i + 1][j] = 1; b[i + 2][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {  //left
+                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1) or (b[i - 1][j - 3] == 1) or (b[i][j - 3] == 1) or (b[i + 1][j - 3] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j - 1] = 1; b[i][j - 2] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+    l = 0;      //count 2 ships
+    while (l < 3) {
+        int i = rand() % size; int j = rand() % size;
+        if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
+        else {
+            if (i >= 1 && i <= 8 && j >= 1 && j <= 8) {
+                int v = rand() % 2;     //vertical 0, horizont 1
+                if (v == 0) {    //vertical
+                    int r = rand() % 2;   //down 0, up 1
+                    if (r == 0) {    //down
+                        if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i + 1][j] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                    if (r == 1) {   //up
+                        if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i - 1][j] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                }
+                if (v == 1) {   //horizont
+                    int r = rand() % 2;   //left 0, right 1
+                    if (r == 0) {       //left
+                        if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i][j - 1] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                    if (r == 1) {       //right
+                        if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i][j + 1] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                }
+            }
+            if (i >= 0 && i <= 8 && j == 0) {
+                int v = rand() % 2;     //down 0, right 1
+                if (v == 0) {   //down
+                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i + 1][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {   //right
+                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j + 1] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i == 9 && j >= 0 && j <= 8) {
+                int v = rand() % 2;     //up 0, right 1
+                if (v == 0) {       //up
+                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i - 1][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {       //right
+                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j + 1] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i >= 1 && i <= 9 && j == 9) {
+                int v = rand() % 2;     //up 0, left 1
+                if (v == 0) {   //up
+                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i - 1][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {   //left
+                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j - 1] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i == 0 && j >= 1 && j <= 9) {
+                int v = rand() % 2;      //down 0, left 1
+                if (v == 0) {   //down
+                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i + 1][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {  //left
+                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j - 1] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+
+            }
+        }
+    }
+    l = 0;      //count 1 ships
+    while (l < 4) {
+        int i = rand() % size; int j = rand() % size;
+        if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
+        else {
+            b[i][j] = 1;
+            l += 1;
+        }
+    }
+}
+
+void Player_placement(int b[size][size]) {
+    int l = 0;      //count 4 ships
+    while (l < 1) {
+        int i = rand() % size; int j = rand() % size;
+        b[i][j] = 1;
+        if ((i >= 3 && i <= 6) && (j > 2 && j < 7)) {
+            int v = rand() % 2;
+            if (v == 0) {    //vertical
+                int r = rand() % 2;   //down 0, up 1
+                if (r == 0) {    //down
+                    b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
+                    l += 1;
+                }
+                if (r == 1) {   //up
+                    b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
+                    l += 1;
+                }
+            }
+            if (v == 1) {   //horizont
+                int r = rand() % 2;   //left 0, right 1
+                if (r == 0) {      //left
+                    b[i][j - 1] = 1; b[i][j - 2] = 1; b[i][j - 3] = 1;
+                    l += 1;
+                }
+                if (r == 1) {   //right
+                    b[i][j + 1] = 1; b[i][j + 2] = 1; b[i][j + 3] = 1;
+                    l += 1;
+                }
+            }
+        }
+        if ((i >= 0 && i <= 6) && (j >= 0 && j <= 2)) {
+            int v = rand() % 2;     //down 0, right 1
+            if (v == 0) {     //down
+                b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
+                l += 1;
+            }
+            if (v == 1) {     //right
+                b[i][j + 1] = 1; b[i][j + 2] = 1; b[i][j + 3] = 1;
+                l += 1;
+            }
+        }
+        if ((i >= 7 && i <= 9) && (j >= 0 && j <= 6)) {
+            int v = rand() % 2;     //up 0, right 1
+            if (v == 0) {     //up
+                b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
+                l += 1;
+            }
+            if (v == 1) {     //right
+                b[i][j + 1] = 1; b[i][j + 2] = 1; b[i][j + 3] = 1;
+                l += 1;
+            }
+        }
+        if ((i >= 3 && i <= 9) && (j >= 7 && j <= 9)) {
+            int v = rand() % 2;     //up 0, left 1
+            if (v == 0) {     //up
+                b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
+                l += 1;
+            }
+            if (v == 1) {     //left
+                b[i][j - 1] = 1; b[i][j - 2] = 1; b[i][j - 3] = 1;
+                l += 1;
+            }
+
+        }
+        if ((i >= 0 && i <= 2) && (j >= 3 && j <= 9)) {
+            int v = rand() % 2;     //down 0, left 1
+            if (v == 0) {     //down
+                b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
+                l += 1;
+            }
+            if (v == 1) {     //left
+                b[i][j - 1] = 1; b[i][j - 2] = 1; b[i][j - 3] = 1;
+                l += 1;
+            }
+        }
+
+
+    }
+    l = 0;      //count 3 ships
+    while (l < 2) {
+        int i = rand() % size; int j = rand() % size;
+        if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
+        else {
+            if (i >= 2 && i <= 7 && j >= 2 && j <= 7) {
+                int v = rand() % 2;     //vertical 0, horizont 1
+                if (v == 0) {    //vertical
+                    int r = rand() % 2;   //down 0, up 1
+                    if (r == 0) {    //down
+                        if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i + 1][j] = 1; b[i + 2][j] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                    if (r == 1) {   //up
+                        if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i - 1][j] = 1; b[i - 2][j] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                }
+                if (v == 1) {   //horizont
+                    int r = rand() % 2;   //left 0, right 1
+                    if (r == 0) {       //left
+                        if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1) or (b[i - 1][j - 3] == 1) or (b[i][j - 3] == 1) or (b[i + 1][j - 3] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i][j - 1] = 1; b[i][j - 2] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                    if (r == 1) {       //right
+                        if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1) or (b[i - 1][j + 3] == 1) or (b[i][j + 3] == 1) or (b[i + 1][j + 3] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i][j + 1] = 1; b[i][j + 2] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                }
+            }
+            if (i >= 0 && i <= 7 && j >= 0 && j <= 1) {
+                int v = rand() % 2;     //down 0, right 1
+                if (v == 0) {   //down
+                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i + 1][j] = 1; b[i + 2][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {   //right
+                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1) or (b[i - 1][j + 3] == 1) or (b[i][j + 3] == 1) or (b[i + 1][j + 3] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j + 1] = 1; b[i][j + 2] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i >= 8 && i <= 9 && j >= 0 && j <= 7) {
+                int v = rand() % 2;     //up 0, right 1
+                if (v == 0) {       //up
+                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i - 1][j] = 1; b[i - 2][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {       //right
+                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1) or (b[i - 1][j + 3] == 1) or (b[i][j + 3] == 1) or (b[i + 1][j + 3] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j + 1] = 1; b[i][j + 2] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i >= 1 && i <= 9 && j >= 8 && j <= 9) {
+                int v = rand() % 2;     //up 0, left 1
+                if (v == 0) {   //up
+                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i - 1][j] = 1; b[i - 2][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {   //left
+                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1) or (b[i - 1][j - 3] == 1) or (b[i][j - 3] == 1) or (b[i + 1][j - 3] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j - 1] = 1; b[i][j - 2] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i >= 0 && i <= 1 && j >= 1 && j <= 9) {
+                int v = rand() % 2;      //down 0, left 1
+                if (v == 0) {   //down
+                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i + 1][j] = 1; b[i + 2][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {  //left
+                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1) or (b[i - 1][j - 3] == 1) or (b[i][j - 3] == 1) or (b[i + 1][j - 3] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j - 1] = 1; b[i][j - 2] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+    l = 0;      //count 2 ships
+    while (l < 3) {
+        int i = rand() % size; int j = rand() % size;
+        if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
+        else {
+            if (i >= 1 && i <= 8 && j >= 1 && j <= 8) {
+                int v = rand() % 2;     //vertical 0, horizont 1
+                if (v == 0) {    //vertical
+                    int r = rand() % 2;   //down 0, up 1
+                    if (r == 0) {    //down
+                        if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i + 1][j] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                    if (r == 1) {   //up
+                        if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i - 1][j] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                }
+                if (v == 1) {   //horizont
+                    int r = rand() % 2;   //left 0, right 1
+                    if (r == 0) {       //left
+                        if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i][j - 1] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                    if (r == 1) {       //right
+                        if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1)) continue;
+                        else {
+                            b[i][j] = 1; b[i][j + 1] = 1;
+                            l += 1;
+                            continue;
+                        }
+                    }
+                }
+            }
+            if (i >= 0 && i <= 8 && j == 0) {
+                int v = rand() % 2;     //down 0, right 1
+                if (v == 0) {   //down
+                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i + 1][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {   //right
+                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j + 1] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i == 9 && j >= 0 && j <= 8) {
+                int v = rand() % 2;     //up 0, right 1
+                if (v == 0) {       //up
+                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i - 1][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {       //right
+                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j + 1] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i >= 1 && i <= 9 && j == 9) {
+                int v = rand() % 2;     //up 0, left 1
+                if (v == 0) {   //up
+                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i - 1][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {   //left
+                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j - 1] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+            }
+            if (i == 0 && j >= 1 && j <= 9) {
+                int v = rand() % 2;      //down 0, left 1
+                if (v == 0) {   //down
+                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i + 1][j] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+                if (v == 1) {  //left
+                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1)) continue;
+                    else {
+                        b[i][j] = 1; b[i][j - 1] = 1;
+                        l += 1;
+                        continue;
+                    }
+                }
+
+            }
+        }
+    }
+    l = 0;      //count 1 ships
+    while (l < 4) {
+        int i = rand() % size; int j = rand() % size;
+        if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
+        else {
+            b[i][j] = 1;
+            l += 1;
         }
     }
 }
@@ -77,24 +761,9 @@ int main() {
 
     // рандомно размещаем корабли компьютера
     srand(time(NULL));
-    for (int i = 0; i < 5; i++) { // 5 кораблей
-        int x = rand() % size;
-        int y = rand() % size;
-        while (computerGrid[x][y] == 1 || computerGrid[x][y] == 2 || computerGrid[x][y] == 3) { // не ставим корабли на занятые клетки
-            x = rand() % size;
-            y = rand() % size;
-        }
-        computerGrid[x][y] = 1;
-    }
-    for (int i = 0; i < 5; i++) { // 5 кораблей
-        int x = rand() % size;
-        int y = rand() % size;
-        while (playerGrid[x][y] == 1 || playerGrid[x][y] == 2 || playerGrid[x][y] == 3) { // не ставим корабли на занятые клетки
-            x = rand() % size;
-            y = rand() % size;
-        }
-        playerGrid[x][y] = 1;
-    }
+
+    Computer_placement(computerGrid);
+    Player_placement(playerGrid);
 
     while (window.isOpen()) {
         Event event;
@@ -105,7 +774,12 @@ int main() {
             if (isPlayerTurn && event.type == Event::MouseButtonPressed && (event.mouseButton.x < (size * 2) * cellSize + 0.5f) && (event.mouseButton.x > (size +0.5f) * cellSize)) { // если сейчас ход игрока и он нажал на ячейку
                 int x = (event.mouseButton.x - (size + 0.5f) * cellSize) / cellSize;
                 int y = event.mouseButton.y / cellSize;
-                if (computerGrid[x][y] == 1) { // попал
+
+                if (computerGrid[x][y] == 1 && computerGrid[x][y-1] != 1 && computerGrid[x][y + 1] != 1 && computerGrid[x - 1][y] != 1 && computerGrid[x + 1][y] != 1) { // убил
+                    computerGrid[x][y] = 4;
+                    win += 1;
+                }
+                else if (computerGrid[x][y] == 1 && (computerGrid[x][y - 1] == 1 || computerGrid[x][y + 1] == 1 || computerGrid[x - 1][y] == 1 || computerGrid[x + 1][y] == 1)) { // убил
                     computerGrid[x][y] = 3;
                     win += 1;
                 }
@@ -144,11 +818,11 @@ int main() {
                 isPlayerTurn = true;
             }
         }
-        if (win == 5) {
-            std::cout << "You win!";
+        if (win == 20) {
+            std::cout << "You won!";
             window.close();
         }
-        if (lose == 5) {
+        if (lose == 20) {
             std::cout << "You lost!";
             window.close();
         }
