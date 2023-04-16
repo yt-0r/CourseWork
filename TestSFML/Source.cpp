@@ -23,8 +23,12 @@ void drawGrid(RenderWindow& window, int grid[size][size], bool isPlayerGrid) {
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 cell.setPosition(x * cellSize + x_offset, y * cellSize);
-                if (computerGrid[x][y] == 0 || computerGrid[x][y] == 1) { // неоткрыта€ €чейка или корабль компьютера
+                if (computerGrid[x][y] == 0) { // неоткрыта€ €чейка или корабль компьютера
                     cell.setFillColor(Color::White);
+                    cell.setOutlineColor(Color::Black);
+                }
+                if (computerGrid[x][y] == 1) { // неоткрыта€ €чейка или корабль компьютера
+                    cell.setFillColor(Color::Blue);
                     cell.setOutlineColor(Color::Black);
                 }
                 else if (computerGrid[x][y] == 2) { // промах
@@ -621,7 +625,7 @@ int main() {
         if (!isPlayerTurn) { // если сейчас ход компьютера
             int x = rand() % size;
             int y = rand() % size;
-            while (playerGrid[x][y] == 2 || playerGrid[x][y] == 3) { // не стрел€ем по уже открытым €чейкам
+            while (playerGrid[x][y] == 2 || playerGrid[x][y] == 3 || playerGrid[x][y] == 4) { // не стрел€ем по уже открытым €чейкам
                 x = rand() % size;
                 y = rand() % size;
             }
