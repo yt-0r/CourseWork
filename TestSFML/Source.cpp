@@ -23,8 +23,12 @@ void drawGrid(RenderWindow& window, int grid[size][size], bool isPlayerGrid) {
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 cell.setPosition(x * cellSize + x_offset, y * cellSize);
-                if (computerGrid[x][y] == 0 || computerGrid[x][y] == 1) { // неоткрыта€ €чейка или корабль компьютера
+                if (computerGrid[x][y] == 0) { // неоткрыта€ €чейка или корабль компьютера
                     cell.setFillColor(Color::White);
+                    cell.setOutlineColor(Color::Black);
+                }
+                if (computerGrid[x][y] == 1) { // неоткрыта€ €чейка или корабль компьютера
+                    cell.setFillColor(Color::Blue);
                     cell.setOutlineColor(Color::Black);
                 }
                 else if (computerGrid[x][y] == 2) { // промах
@@ -748,6 +752,98 @@ void Player_placement(int b[size][size]) {
     }
 }
 
+bool isSunk(int x, int y, int Grid[10][10], int size) {
+    if (Grid[x + 1][y] != 1) {
+        if (Grid[x + 1][y] == 3 || Grid[x + 1][y] == 4) {
+            if (Grid[x + 2][y] != 1) {
+                if (Grid[x + 2][y] == 3 || Grid[x + 2][y] == 4) {
+                    if (Grid[x + 3][y] != 1) {
+                        if (Grid[x + 3][y] == 3 || Grid[x + 3][y] == 4) {
+                            return true;
+                        }
+                    }
+                    else if (Grid[x + 3][y] == 1) {
+                        return false;
+                    }
+                }
+            }
+            else if (Grid[x + 2][y] == 1) {
+                return false;
+            }
+        }
+    }
+    else if (Grid[x + 1][y] == 1) {
+        return false;
+    }
+    if (Grid[x - 1][y] != 1) {
+        if (Grid[x - 1][y] == 3 || Grid[x - 1][y] == 4) {
+            if (Grid[x - 2][y] != 1) {
+                if (Grid[x - 2][y] == 3 || Grid[x - 2][y] == 4) {
+                    if (Grid[x - 3][y] != 1) {
+                        if (Grid[x - 3][y] == 3 || Grid[x - 3][y] == 4) {
+                            return true;
+                        }
+                    }
+                    else if (Grid[x - 3][y] == 1) {
+                        return false;
+                    }
+                }
+            }
+            else if (Grid[x - 2][y] == 1) {
+                return false;
+            }
+        }
+    }
+    else if (Grid[x - 1][y] == 1) {
+        return false;
+    }
+    if (Grid[x][y + 1] != 1) {
+        if (Grid[x][y + 1] == 3 || Grid[x][y + 1] == 4) {
+            if (Grid[x][y + 2] != 1) {
+                if (Grid[x][y + 2] == 3 || Grid[x][y + 2] == 4) {
+                    if (Grid[x][y + 3] != 1) {
+                        if (Grid[x][y + 3] == 3 || Grid[x][y + 3] == 4) {
+                            return true;
+                        }
+                    }
+                    else if (Grid[x][y + 3] == 1) {
+                        return false;
+                    }
+                }
+            }
+            else if (Grid[x][y + 2] == 1) {
+                return false;
+            }
+        }
+    }
+    else if (Grid[x][y + 1] == 1) {
+        return false;
+    }
+    if (Grid[x][y - 1] != 1) {
+        if (Grid[x][y - 1] == 3 || Grid[x][y - 1] == 4) {
+            if (Grid[x][y - 2] != 1) {
+                if (Grid[x][y - 2] == 3 || Grid[x][y - 2] == 4) {
+                    if (Grid[x][y - 3] != 1) {
+                        if (Grid[x][y - 3] == 3 || Grid[x][y - 3] == 4) {
+                            return true;
+                        }
+                    }
+                    else if (Grid[x][y - 3] == 1) {
+                        return false;
+                    }
+                }
+            }
+            else if (Grid[x][y - 2] == 1) {
+                return false;
+            }
+        }
+    }
+    else if (Grid[x][y - 1] == 1) {
+        return false;
+    }
+    return true;
+}
+
 int main() {
     RenderWindow window(VideoMode(size * cellSize * 2.5, size * cellSize), "Battleships", Style::Titlebar | Style::Close);
     window.setFramerateLimit(60);
@@ -775,11 +871,7 @@ int main() {
                 int x = (event.mouseButton.x - (size + 0.5f) * cellSize) / cellSize;
                 int y = event.mouseButton.y / cellSize;
 
-                if (computerGrid[x][y] == 1 && computerGrid[x][y-1] != 1 && computerGrid[x][y + 1] != 1 && computerGrid[x - 1][y] != 1 && computerGrid[x + 1][y] != 1) { // убил
-                    computerGrid[x][y] = 4;
-                    win += 1;
-                }
-                else if (computerGrid[x][y] == 1 && (computerGrid[x][y - 1] == 1 || computerGrid[x][y + 1] == 1 || computerGrid[x - 1][y] == 1 || computerGrid[x + 1][y] == 1)) { // убил
+                if (computerGrid[x][y] == 1) { // убил
                     computerGrid[x][y] = 3;
                     win += 1;
                 }
@@ -799,6 +891,16 @@ int main() {
             }
         }
         window.clear(Color::White);
+
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                if (computerGrid[x][y] == 3) {
+                    if (isSunk(x, y, computerGrid, size) == true) {
+                        computerGrid[x][y] = 4;
+                    }
+                }
+            }
+        }
 
         drawGrid(window, playerGrid, true); // рисуем поле игрока
         drawGrid(window, computerGrid, false); // рисуем поле компьютера
