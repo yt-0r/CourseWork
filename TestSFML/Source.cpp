@@ -581,6 +581,35 @@ int main() {
                         }
                     }
                 }
+                if (playerGrid[x][y] == 3) {
+                    if (isSunk(x, y, playerGrid, size) == true) {
+                        playerGrid[x][y] = 4;
+                        if (playerGrid[x + 1][y] == 0 && (x + 1) >= 0 && (x + 1) < 10 && y >= 0 && y < 10) {
+                            playerGrid[x + 1][y] = 2;
+                        }
+                        if (playerGrid[x - 1][y] == 0 && (x - 1) >= 0 && (x - 1) < 10 && y >= 0 && y < 10) {
+                            playerGrid[x - 1][y] = 2;
+                        }
+                        if (playerGrid[x][y + 1] == 0 && x >= 0 && x < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                            playerGrid[x][y + 1] = 2;
+                        }
+                        if (playerGrid[x][y - 1] == 0 && x >= 0 && x < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                            playerGrid[x][y - 1] = 2;
+                        }
+                        if (playerGrid[x + 1][y + 1] == 0 && (x + 1) >= 0 && (x + 1) < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                            playerGrid[x + 1][y + 1] = 2;
+                        }
+                        if (playerGrid[x - 1][y - 1] == 0 && (x - 1) >= 0 && (x - 1) < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                            playerGrid[x - 1][y - 1] = 2;
+                        }
+                        if (playerGrid[x - 1][y + 1] == 0 && (x - 1) >= 0 && (x - 1) < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                            playerGrid[x - 1][y + 1] = 2;
+                        }
+                        if (playerGrid[x + 1][y - 1] == 0 && (x + 1) >= 0 && (x + 1) < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                            playerGrid[x + 1][y - 1] = 2;
+                        }
+                    }
+                }
             }
         }
 
