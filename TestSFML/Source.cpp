@@ -749,7 +749,7 @@ void Player_placement(int b[size][size]) {
 }
 
 int main() {
-    RenderWindow window(VideoMode(size * cellSize * 2.5, size * cellSize), "Battleships", sf::Style::Titlebar | sf::Style::Close);
+    RenderWindow window(VideoMode(size * cellSize * 2.5, size * cellSize), "Battleships", Style::Titlebar | Style::Close);
     window.setFramerateLimit(60);
     // инициализируем поле игрока и компьютера
     for (int x = 0; x < size; x++) {
