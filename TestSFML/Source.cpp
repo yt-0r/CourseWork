@@ -23,12 +23,8 @@ void drawGrid(RenderWindow& window, int grid[size][size], bool isPlayerGrid) {
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 cell.setPosition(x * cellSize + x_offset, y * cellSize);
-                if (computerGrid[x][y] == 0) { // неоткрыта€ €чейка или корабль компьютера
+                if (computerGrid[x][y] == 0 || computerGrid[x][y] == 1) { // неоткрыта€ €чейка или корабль компьютера
                     cell.setFillColor(Color::White);
-                    cell.setOutlineColor(Color::Black);
-                }
-                if (computerGrid[x][y] == 1) { // неоткрыта€ €чейка или корабль компьютера
-                    cell.setFillColor(Color::Blue);
                     cell.setOutlineColor(Color::Black);
                 }
                 else if (computerGrid[x][y] == 2) { // промах
@@ -897,6 +893,30 @@ int main() {
                 if (computerGrid[x][y] == 3) {
                     if (isSunk(x, y, computerGrid, size) == true) {
                         computerGrid[x][y] = 4;
+                        if (computerGrid[x + 1][y] == 0 && (x + 1) >= 0 && (x + 1) < 10 && y >= 0 && y < 10) {
+                            computerGrid[x + 1][y] = 2;
+                        }
+                        if (computerGrid[x - 1][y] == 0 && (x - 1) >= 0 && (x - 1) < 10 && y >= 0 && y < 10) {
+                            computerGrid[x - 1][y] = 2;
+                        }
+                        if (computerGrid[x][y + 1] == 0 && x >= 0 && x < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                            computerGrid[x][y + 1] = 2;
+                        }
+                        if (computerGrid[x][y - 1] == 0 && x >= 0 && x < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                            computerGrid[x][y - 1] = 2;
+                        }
+                        if (computerGrid[x + 1][y + 1] == 0 && (x + 1) >= 0 && (x + 1) < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                            computerGrid[x + 1][y + 1] = 2;
+                        }
+                        if (computerGrid[x - 1][y - 1] == 0 && (x - 1) >= 0 && (x - 1) < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                            computerGrid[x - 1][y - 1] = 2;
+                        }
+                        if (computerGrid[x - 1][y + 1] == 0 && (x - 1) >= 0 && (x - 1) < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                            computerGrid[x - 1][y + 1] = 2;
+                        }
+                        if (computerGrid[x + 1][y - 1] == 0 && (x + 1) >= 0 && (x + 1) < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                            computerGrid[x + 1][y - 1] = 2;
+                        }
                     }
                 }
             }
