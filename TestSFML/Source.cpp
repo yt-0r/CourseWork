@@ -771,7 +771,7 @@ int main() {
             if (event.type == Event::Closed) {
                 window.close();
             }
-            if (isPlayerTurn && event.type == Event::MouseButtonPressed && (event.mouseButton.x < (size * 2) * cellSize + 0.5f) && (event.mouseButton.x > (size +0.5f) * cellSize)) { // если сейчас ход игрока и он нажал на €чейку
+            if (isPlayerTurn && event.type == Event::MouseButtonPressed && (event.mouseButton.x < ((size * 2) + 0.5f) * cellSize) && (event.mouseButton.x > (size + 0.5f) * cellSize)) { // если сейчас ход игрока и он нажал на €чейку
                 int x = (event.mouseButton.x - (size + 0.5f) * cellSize) / cellSize;
                 int y = event.mouseButton.y / cellSize;
 
