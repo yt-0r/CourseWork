@@ -19,7 +19,7 @@ void drawGrid(RenderWindow& window, int grid[size][size], bool isPlayerGrid) {
 
     float x_offset = 0.f;
     if (!isPlayerGrid) {
-        x_offset = (size + 1.5f) * cellSize;
+        x_offset = (size + 0.5f) * cellSize;
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 cell.setPosition(x * cellSize + x_offset, y * cellSize);
@@ -525,8 +525,8 @@ int main() {
             if (event.type == Event::Closed) {
                 window.close();
             }
-            if (isPlayerTurn && event.type == Event::MouseButtonPressed && (event.mouseButton.x < ((size * 2) + 1.5f) * cellSize) && (event.mouseButton.x > (size + 1.5f) * cellSize)) { // если сейчас ход игрока и он нажал на €чейку
-                int x = (event.mouseButton.x - (size + 1.5f) * cellSize) / cellSize;
+            if (isPlayerTurn && event.type == Event::MouseButtonPressed && (event.mouseButton.x < ((size * 2) + 0.5f) * cellSize) && (event.mouseButton.x > (size + 0.5f) * cellSize)) { // если сейчас ход игрока и он нажал на €чейку
+                int x = (event.mouseButton.x - (size + 0.5f) * cellSize) / cellSize;
                 int y = event.mouseButton.y / cellSize;
 
                 if (computerGrid[x][y] == 1) { // убил
