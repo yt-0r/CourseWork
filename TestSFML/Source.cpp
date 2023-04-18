@@ -1,5 +1,7 @@
 #include <Graphics.hpp>
 #include <iostream>
+#include <cmath>
+#include <ctime>
 
 using namespace sf;
 
@@ -7,21 +9,22 @@ const int cellSize = 50; // размер €чеек
 const int size = 10; // размер пол€
 int win = 0;
 int lose = 0;
+bool isPaused = 0;
 
-int playerGrid[size][size]; // игровое поле игрока
-int computerGrid[size][size]; // игровое поле компьютера
+int playerGrid[size+2][size+2]; // игровое поле игрока
+int computerGrid[size+2][size+2]; // игровое поле компьютера
 
 bool isPlayerTurn = true; // ход игрока
 
-void drawGrid(RenderWindow& window, int grid[size][size], bool isPlayerGrid) {
+void drawGrid(RenderWindow& window, int grid[size+2][size+2], bool isPlayerGrid) {
     RectangleShape cell(Vector2f(cellSize, cellSize));
     cell.setOutlineThickness(1.f);
 
     float x_offset = 0.f;
     if (!isPlayerGrid) {
-        x_offset = (size + 0.5f) * cellSize;
-        for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
+        x_offset = (size+2) * cellSize;
+        for (int x = 0; x < size+2; x++) {
+            for (int y = 0; y < size+2; y++) {
                 cell.setPosition(x * cellSize + x_offset, y * cellSize);
                 if (computerGrid[x][y] == 0 || computerGrid[x][y] == 1) { // неоткрыта€ €чейка или корабль компьютера
                     cell.setFillColor(Color::White);
@@ -39,13 +42,17 @@ void drawGrid(RenderWindow& window, int grid[size][size], bool isPlayerGrid) {
                     cell.setFillColor(Color::Black);
                     cell.setOutlineColor(Color::Black);
                 }
+                else if (computerGrid[x][y] == -1) { // попадание
+                    cell.setFillColor(Color::Magenta);
+                    cell.setOutlineColor(Color::Magenta);
+                }
                 window.draw(cell);
             }
         }
     }
 
-    for (int x = 0; x < size; x++) {
-        for (int y = 0; y < size; y++) {
+    for (int x = 0; x < size+2; x++) {
+        for (int y = 0; y < size+2; y++) {
             cell.setPosition(x * cellSize, y * cellSize);
             if (playerGrid[x][y] == 0) { // неоткрыта€ €чейка
                 cell.setFillColor(Color::White);
@@ -67,15 +74,19 @@ void drawGrid(RenderWindow& window, int grid[size][size], bool isPlayerGrid) {
                 cell.setFillColor(Color::Black);
                 cell.setOutlineColor(Color::Black);
             }
+            else if (playerGrid[x][y] == -1) { // попадание
+                cell.setFillColor(Color::Magenta);
+                cell.setOutlineColor(Color::Magenta);
+            }
             window.draw(cell);
         }
     }
 }
 
-void Ship_placement(int b[size][size]) {
+void Ship_placement(int b[size+2][size+2]) {
     int l = 0;      //count 4 ships
     while (l < 1) {
-        int i = rand() % size; int j = rand() % size;
+        int i = rand() % size + 1; int j = rand() % size + 1;
         b[i][j] = 1;
         if ((i >= 3 && i <= 6) && (j > 2 && j < 7)) {
             int v = rand() % 2;
@@ -152,7 +163,7 @@ void Ship_placement(int b[size][size]) {
     }
     l = 0;      //count 3 ships
     while (l < 2) {
-        int i = rand() % size; int j = rand() % size;
+        int i = rand() % size + 1; int j = rand() % size + 1;
         if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
         else {
             if (i >= 2 && i <= 7 && j >= 2 && j <= 7) {
@@ -276,7 +287,7 @@ void Ship_placement(int b[size][size]) {
     }
     l = 0;      //count 2 ships
     while (l < 3) {
-        int i = rand() % size; int j = rand() % size;
+        int i = rand() % size + 1; int j = rand() % size + 1;
         if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
         else {
             if (i >= 1 && i <= 8 && j >= 1 && j <= 8) {
@@ -401,7 +412,7 @@ void Ship_placement(int b[size][size]) {
     }
     l = 0;      //count 1 ships
     while (l < 4) {
-        int i = rand() % size; int j = rand() % size;
+        int i = rand() % size + 1; int j = rand() % size + 1;
         if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
         else {
             b[i][j] = 1;
@@ -410,7 +421,7 @@ void Ship_placement(int b[size][size]) {
     }
 }
 
-bool isSunk(int x, int y, int Grid[10][10], int size) {
+bool isSunk(int x, int y, int Grid[size+2][size+2], int size) {
     if (Grid[x + 1][y] != 1) {
         if (Grid[x + 1][y] == 3 || Grid[x + 1][y] == 4) {
             if (Grid[x + 2][y] != 1) {
@@ -502,15 +513,32 @@ bool isSunk(int x, int y, int Grid[10][10], int size) {
     return true;
 }
 
+void timer() {
+    clock_t start_time = clock(); // ѕолучение текущего времени
+    while (clock() < start_time + 0.5 * CLOCKS_PER_SEC) {} // ќжидание 2 секунд
+}
+
 int main() {
-    RenderWindow window(VideoMode(size * cellSize * 2.5, size * cellSize), "Battleships", Style::Titlebar | Style::Close);
+    RenderWindow window(VideoMode(size * cellSize * 2.5, size * cellSize * 1.5), "Battleships", Style::Titlebar | Style::Close);
     window.setFramerateLimit(60);
     // инициализируем поле игрока и компьютера
-    for (int x = 0; x < size; x++) {
-        for (int y = 0; y < size; y++) {
+    for (int x = 1; x < size+1; x++) {
+        for (int y = 1; y < size+1; y++) {
             playerGrid[x][y] = 0;
             computerGrid[x][y] = 0;
         }
+    }
+    for (int x = 0; x < size + 2; x++) {
+        playerGrid[x][0] = -1;
+        computerGrid[x][0] = -1;
+        playerGrid[x][size + 1] = -1;
+        computerGrid[x][size + 1] = -1;
+    }
+    for (int y = 0; y < size + 2; y++) {
+        playerGrid[0][y] = -1;
+        computerGrid[0][y] = -1;
+        playerGrid[size + 1][y] = -1;
+        computerGrid[size + 1][y] = -1;
     }
 
     // рандомно размещаем корабли компьютера
@@ -525,8 +553,8 @@ int main() {
             if (event.type == Event::Closed) {
                 window.close();
             }
-            if (isPlayerTurn && event.type == Event::MouseButtonPressed && (event.mouseButton.x < ((size * 2) + 0.5f) * cellSize) && (event.mouseButton.x > (size + 0.5f) * cellSize)) { // если сейчас ход игрока и он нажал на €чейку
-                int x = (event.mouseButton.x - (size + 0.5f) * cellSize) / cellSize;
+            if (isPlayerTurn && event.type == Event::MouseButtonPressed && (event.mouseButton.x < ((size + 2) * 2) * cellSize) && (event.mouseButton.x > (size + 2) * cellSize)) { // если сейчас ход игрока и он нажал на €чейку
+                int x = (event.mouseButton.x - (size+2) * cellSize) / cellSize;
                 int y = event.mouseButton.y / cellSize;
 
                 if (computerGrid[x][y] == 1) { // убил
@@ -542,6 +570,9 @@ int main() {
                 else if (computerGrid[x][y] == 2) {
                     computerGrid[x][y] = 2;
                 }
+                else if (computerGrid[x][y] == -1) {
+                    computerGrid[x][y] = -1;
+                }
                 else { // промах
                     computerGrid[x][y] = 2;
                     isPlayerTurn = false;
@@ -550,33 +581,33 @@ int main() {
         }
         window.clear(Color::White);
 
-        for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
+        for (int x = 1; x < size+1; x++) {
+            for (int y = 1; y < size+1; y++) {
                 if (computerGrid[x][y] == 3) {
                     if (isSunk(x, y, computerGrid, size) == true) {
                         computerGrid[x][y] = 4;
-                        if (computerGrid[x + 1][y] == 0 && (x + 1) >= 0 && (x + 1) < 10 && y >= 0 && y < 10) {
+                        if (computerGrid[x + 1][y] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && y >= 1 && y < size + 1) {
                             computerGrid[x + 1][y] = 2;
                         }
-                        if (computerGrid[x - 1][y] == 0 && (x - 1) >= 0 && (x - 1) < 10 && y >= 0 && y < 10) {
+                        if (computerGrid[x - 1][y] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && y >= 1 && y < size + 1) {
                             computerGrid[x - 1][y] = 2;
                         }
-                        if (computerGrid[x][y + 1] == 0 && x >= 0 && x < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                        if (computerGrid[x][y + 1] == 0 && x >= 1 && x < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
                             computerGrid[x][y + 1] = 2;
                         }
-                        if (computerGrid[x][y - 1] == 0 && x >= 0 && x < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                        if (computerGrid[x][y - 1] == 0 && x >= 1 && x < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
                             computerGrid[x][y - 1] = 2;
                         }
-                        if (computerGrid[x + 1][y + 1] == 0 && (x + 1) >= 0 && (x + 1) < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                        if (computerGrid[x + 1][y + 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
                             computerGrid[x + 1][y + 1] = 2;
                         }
-                        if (computerGrid[x - 1][y - 1] == 0 && (x - 1) >= 0 && (x - 1) < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                        if (computerGrid[x - 1][y - 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
                             computerGrid[x - 1][y - 1] = 2;
                         }
-                        if (computerGrid[x - 1][y + 1] == 0 && (x - 1) >= 0 && (x - 1) < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                        if (computerGrid[x - 1][y + 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
                             computerGrid[x - 1][y + 1] = 2;
                         }
-                        if (computerGrid[x + 1][y - 1] == 0 && (x + 1) >= 0 && (x + 1) < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                        if (computerGrid[x + 1][y - 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
                             computerGrid[x + 1][y - 1] = 2;
                         }
                     }
@@ -584,55 +615,97 @@ int main() {
                 if (playerGrid[x][y] == 3) {
                     if (isSunk(x, y, playerGrid, size) == true) {
                         playerGrid[x][y] = 4;
-                        if (playerGrid[x + 1][y] == 0 && (x + 1) >= 0 && (x + 1) < 10 && y >= 0 && y < 10) {
+                        if (playerGrid[x + 1][y] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && y >= 1 && y < size + 1) {
                             playerGrid[x + 1][y] = 2;
                         }
-                        if (playerGrid[x - 1][y] == 0 && (x - 1) >= 0 && (x - 1) < 10 && y >= 0 && y < 10) {
+                        if (playerGrid[x - 1][y] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && y >= 1 && y < size + 1){
                             playerGrid[x - 1][y] = 2;
                         }
-                        if (playerGrid[x][y + 1] == 0 && x >= 0 && x < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                        if (playerGrid[x][y + 1] == 0 && x >= 1 && x < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
                             playerGrid[x][y + 1] = 2;
                         }
-                        if (playerGrid[x][y - 1] == 0 && x >= 0 && x < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                        if (playerGrid[x][y - 1] == 0 && x >= 1 && x < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
                             playerGrid[x][y - 1] = 2;
                         }
-                        if (playerGrid[x + 1][y + 1] == 0 && (x + 1) >= 0 && (x + 1) < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                        if (playerGrid[x + 1][y + 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
                             playerGrid[x + 1][y + 1] = 2;
                         }
-                        if (playerGrid[x - 1][y - 1] == 0 && (x - 1) >= 0 && (x - 1) < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                        if (playerGrid[x - 1][y - 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
                             playerGrid[x - 1][y - 1] = 2;
                         }
-                        if (playerGrid[x - 1][y + 1] == 0 && (x - 1) >= 0 && (x - 1) < 10 && (y + 1) >= 0 && (y + 1) < 10) {
+                        if (playerGrid[x - 1][y + 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
                             playerGrid[x - 1][y + 1] = 2;
                         }
-                        if (playerGrid[x + 1][y - 1] == 0 && (x + 1) >= 0 && (x + 1) < 10 && (y - 1) >= 0 && (y - 1) < 10) {
+                        if (playerGrid[x + 1][y - 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
                             playerGrid[x + 1][y - 1] = 2;
                         }
                     }
                 }
             }
         }
-
         drawGrid(window, playerGrid, true); // рисуем поле игрока
         drawGrid(window, computerGrid, false); // рисуем поле компьютера
-
         window.display();
-
+        
         if (!isPlayerTurn) { // если сейчас ход компьютера
-            int x = rand() % size;
-            int y = rand() % size;
-            while (playerGrid[x][y] == 2 || playerGrid[x][y] == 3 || playerGrid[x][y] == 4) { // не стрел€ем по уже открытым €чейкам
-                x = rand() % size;
-                y = rand() % size;
+            if (isPaused == 1) {
+                timer();
             }
-            if (playerGrid[x][y] == 1) { // попал
-                playerGrid[x][y] = 3;
-                lose += 1;
+            bool flaggg = 0;
+
+            for (int x = 1; x < size+1; x++) {
+                for (int y = 1; y < size+1; y++) {
+                    if (playerGrid[x][y] == 3) {
+                        flaggg = 1;
+                    }
+                }
             }
-            else { // промах
-                playerGrid[x][y] = 2;
-                isPlayerTurn = true;
+            if (flaggg == 1) {
+
+                int x = rand() % size + 1;
+                int y = rand() % size + 1;
+                while (1) {
+                    x = rand() % size + 1;
+                    y = rand() % size + 1;
+                    if ((playerGrid[x][y] != 2 && playerGrid[x][y] != 3 && playerGrid[x][y] != 4) &&
+                        (playerGrid[x + 1][y] == 3 || playerGrid[x - 1][y] == 3 || playerGrid[x][y + 1] == 3 || playerGrid[x][y - 1] == 3) &&
+                        (playerGrid[x + 1][y + 1] != 3 && playerGrid[x - 1][y - 1] != 3 && playerGrid[x - 1][y + 1] != 3 && playerGrid[x + 1][y - 1] != 3)) {
+                        break;
+                    }
+                }
+                if (playerGrid[x][y] == 1) { // попал
+                    playerGrid[x][y] = 3;
+                    lose += 1;
+                    isPaused = 1;
+                }
+                else { // промах
+                    playerGrid[x][y] = 2;
+                    isPlayerTurn = true;
+                    isPaused = 0;
+                }
+
             }
+            else if (flaggg == 0) {
+
+                int x = rand() % size + 1;
+                int y = rand() % size + 1;
+                while (playerGrid[x][y] == 2 || playerGrid[x][y] == 3 || playerGrid[x][y] == 4) { // не стрел€ем по уже открытым €чейкам
+                    x = rand() % size + 1;
+                    y = rand() % size + 1;
+                }
+                if (playerGrid[x][y] == 1) { // попал
+                    playerGrid[x][y] = 3;
+                    lose += 1;
+                    isPaused = 1;
+                }
+                else { // промах
+                    playerGrid[x][y] = 2;
+                    isPlayerTurn = true;
+                    isPaused = 0;
+                }
+
+            }
+
         }
         if (win == 20) {
             std::cout << "You won!";
