@@ -519,7 +519,7 @@ void timer() {
 }
 
 int main() {
-    RenderWindow window(VideoMode(size * cellSize * 2.5, size * cellSize * 1.5), "Battleships", Style::Titlebar | Style::Close);
+    RenderWindow window(VideoMode((size+2) * cellSize * 2, (size + 2) * cellSize), "Battleships", Style::Titlebar | Style::Close);
     window.setFramerateLimit(60);
     // инициализируем поле игрока и компьютера
     for (int x = 1; x < size+1; x++) {
