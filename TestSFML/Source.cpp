@@ -1,4 +1,5 @@
 #pragma warning(disable:4244)
+#pragma warning(disable:6385)
 #include <Graphics.hpp>
 #include <iostream>
 #include <cmath>
