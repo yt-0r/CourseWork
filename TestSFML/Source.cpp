@@ -916,6 +916,7 @@ int main() {
                 if (computerGrid[x][y] == 1) { // убил
                     computerGrid[x][y] = 3;
                     win += 1;
+                    isPaused = 1;
                 }
                 else if (computerGrid[x][y] == 4) {
                     computerGrid[x][y] = 4;
@@ -932,6 +933,7 @@ int main() {
                 else { // промах
                     computerGrid[x][y] = 2;
                     isPlayerTurn = false;
+                    isPaused = 1;
                 }
             }
         }
