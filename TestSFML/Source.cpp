@@ -872,12 +872,9 @@ void init() {
     explosion.loadFromFile("../resources/explosion.jpg");
 }
 
-int main() {
-    RenderWindow window(VideoMode((size+2) * cellSize * 2, (size + 2) * cellSize), "Battleships", Style::Titlebar | Style::Close);
-    window.setFramerateLimit(60);
-    // инициализируем поле игрока и компьютера
-    for (int x = 1; x < size+1; x++) {
-        for (int y = 1; y < size+1; y++) {
+void zeroGrid() {
+    for (int x = 1; x < size + 1; x++) {
+        for (int y = 1; y < size + 1; y++) {
             playerGrid[x][y] = 0;
             computerGrid[x][y] = 0;
         }
@@ -894,9 +891,43 @@ int main() {
         playerGrid[size + 1][y] = -1;
         computerGrid[size + 1][y] = -1;
     }
+}
 
-    // рандомно размещаем корабли компьютера
+void aroundHit(int Grid[size + 2][size + 2], int x, int y) {
+    Grid[x][y] = 4;
+    if (Grid[x + 1][y] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && y >= 1 && y < size + 1) {
+        Grid[x + 1][y] = 2;
+    }
+    if (Grid[x - 1][y] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && y >= 1 && y < size + 1) {
+        Grid[x - 1][y] = 2;
+    }
+    if (Grid[x][y + 1] == 0 && x >= 1 && x < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
+        Grid[x][y + 1] = 2;
+    }
+    if (Grid[x][y - 1] == 0 && x >= 1 && x < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
+        Grid[x][y - 1] = 2;
+    }
+    if (Grid[x + 1][y + 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
+        Grid[x + 1][y + 1] = 2;
+    }
+    if (Grid[x - 1][y - 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
+        Grid[x - 1][y - 1] = 2;
+    }
+    if (Grid[x - 1][y + 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
+        Grid[x - 1][y + 1] = 2;
+    }
+    if (Grid[x + 1][y - 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
+        Grid[x + 1][y - 1] = 2;
+    }
+}
+
+int main() {
+    RenderWindow window(VideoMode((size+2) * cellSize * 2, (size + 2) * cellSize), "Battleships", Style::Titlebar | Style::Close);
+    window.setFramerateLimit(60);
+
     srand(time(NULL));
+
+    zeroGrid();
 
     init();
 
@@ -918,19 +949,7 @@ int main() {
                     win += 1;
                     isPaused = 1;
                 }
-                else if (computerGrid[x][y] == 4) {
-                    computerGrid[x][y] = 4;
-                }
-                else if (computerGrid[x][y] == 3) {
-                    computerGrid[x][y] = 3;
-                }
-                else if (computerGrid[x][y] == 2) {
-                    computerGrid[x][y] = 2;
-                }
-                else if (computerGrid[x][y] == -1) {
-                    computerGrid[x][y] = -1;
-                }
-                else { // промах
+                else if (computerGrid[x][y] == 0) { // промах
                     computerGrid[x][y] = 2;
                     isPlayerTurn = false;
                     isPaused = 1;
@@ -943,60 +962,12 @@ int main() {
             for (int y = 1; y < size+1; y++) {
                 if (computerGrid[x][y] == 3) {
                     if (isSunk(x, y, computerGrid, size) == true) {
-                        computerGrid[x][y] = 4;
-                        if (computerGrid[x + 1][y] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && y >= 1 && y < size + 1) {
-                            computerGrid[x + 1][y] = 2;
-                        }
-                        if (computerGrid[x - 1][y] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && y >= 1 && y < size + 1) {
-                            computerGrid[x - 1][y] = 2;
-                        }
-                        if (computerGrid[x][y + 1] == 0 && x >= 1 && x < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
-                            computerGrid[x][y + 1] = 2;
-                        }
-                        if (computerGrid[x][y - 1] == 0 && x >= 1 && x < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
-                            computerGrid[x][y - 1] = 2;
-                        }
-                        if (computerGrid[x + 1][y + 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
-                            computerGrid[x + 1][y + 1] = 2;
-                        }
-                        if (computerGrid[x - 1][y - 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
-                            computerGrid[x - 1][y - 1] = 2;
-                        }
-                        if (computerGrid[x - 1][y + 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
-                            computerGrid[x - 1][y + 1] = 2;
-                        }
-                        if (computerGrid[x + 1][y - 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
-                            computerGrid[x + 1][y - 1] = 2;
-                        }
+                        aroundHit(computerGrid, x, y);
                     }
                 }
                 if (playerGrid[x][y] == 3) {
                     if (isSunk(x, y, playerGrid, size) == true) {
-                        playerGrid[x][y] = 4;
-                        if (playerGrid[x + 1][y] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && y >= 1 && y < size + 1) {
-                            playerGrid[x + 1][y] = 2;
-                        }
-                        if (playerGrid[x - 1][y] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && y >= 1 && y < size + 1){
-                            playerGrid[x - 1][y] = 2;
-                        }
-                        if (playerGrid[x][y + 1] == 0 && x >= 1 && x < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
-                            playerGrid[x][y + 1] = 2;
-                        }
-                        if (playerGrid[x][y - 1] == 0 && x >= 1 && x < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
-                            playerGrid[x][y - 1] = 2;
-                        }
-                        if (playerGrid[x + 1][y + 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
-                            playerGrid[x + 1][y + 1] = 2;
-                        }
-                        if (playerGrid[x - 1][y - 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
-                            playerGrid[x - 1][y - 1] = 2;
-                        }
-                        if (playerGrid[x - 1][y + 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
-                            playerGrid[x - 1][y + 1] = 2;
-                        }
-                        if (playerGrid[x + 1][y - 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
-                            playerGrid[x + 1][y - 1] = 2;
-                        }
+                        aroundHit(playerGrid, x, y);
                     }
                 }
             }
