@@ -1,3 +1,4 @@
+#pragma warning(disable:4244)
 #include <Graphics.hpp>
 #include <iostream>
 #include <cmath>
@@ -16,72 +17,24 @@ int computerGrid[size+2][size+2]; // игровое поле компьютера
 
 bool isPlayerTurn = true; // ход игрока
 
-void drawGrid(RenderWindow& window, int grid[size+2][size+2], bool isPlayerGrid) {
-    RectangleShape cell(Vector2f(cellSize, cellSize));
-    cell.setOutlineThickness(1.f);
-
-    float x_offset = 0.f;
-    if (!isPlayerGrid) {
-        x_offset = (size+2) * cellSize;
-        for (int x = 0; x < size+2; x++) {
-            for (int y = 0; y < size+2; y++) {
-                cell.setPosition(x * cellSize + x_offset, y * cellSize);
-                if (computerGrid[x][y] == 0 || computerGrid[x][y] == 1) { // неоткрытая ячейка или корабль компьютера
-                    cell.setFillColor(Color::White);
-                    cell.setOutlineColor(Color::Black);
-                }
-                else if (computerGrid[x][y] == 2) { // промах
-                    cell.setFillColor(Color::Yellow);
-                    cell.setOutlineColor(Color::Black);
-                }
-                else if (computerGrid[x][y] == 3) { // попадание
-                    cell.setFillColor(Color::Red);
-                    cell.setOutlineColor(Color::Black);
-                }
-                else if (computerGrid[x][y] == 4) { // попадание
-                    cell.setFillColor(Color::Black);
-                    cell.setOutlineColor(Color::Black);
-                }
-                else if (computerGrid[x][y] == -1) { // попадание
-                    cell.setFillColor(Color::Magenta);
-                    cell.setOutlineColor(Color::Magenta);
-                }
-                window.draw(cell);
-            }
-        }
-    }
-
-    for (int x = 0; x < size+2; x++) {
-        for (int y = 0; y < size+2; y++) {
-            cell.setPosition(x * cellSize, y * cellSize);
-            if (playerGrid[x][y] == 0) { // неоткрытая ячейка
-                cell.setFillColor(Color::White);
-                cell.setOutlineColor(Color::Black);
-            }
-            else if (playerGrid[x][y] == 1) { // палуба корабля
-                cell.setFillColor(Color::Blue);
-                cell.setOutlineColor(Color::Black);
-            }
-            else if (playerGrid[x][y] == 2) { // промах
-                cell.setFillColor(Color::Yellow);
-                cell.setOutlineColor(Color::Black);
-            }
-            else if (playerGrid[x][y] == 3) { // попадание
-                cell.setFillColor(Color::Red);
-                cell.setOutlineColor(Color::Black);
-            }
-            else if (playerGrid[x][y] == 4) { // попадание
-                cell.setFillColor(Color::Black);
-                cell.setOutlineColor(Color::Black);
-            }
-            else if (playerGrid[x][y] == -1) { // попадание
-                cell.setFillColor(Color::Magenta);
-                cell.setOutlineColor(Color::Magenta);
-            }
-            window.draw(cell);
-        }
-    }
-}
+Texture sand;
+Texture sea;
+Texture miss;
+Texture explosion;
+Texture ship1;
+Texture ship1exp;
+Texture shipedger;
+Texture shipedgerexp;
+Texture shipedgel;
+Texture shipedgelexp;
+Texture shipedget;
+Texture shipedgetexp;
+Texture shipedged;
+Texture shipedgedexp;
+Texture shipmidlr;
+Texture shipmidlrexp;
+Texture shipmidtd;
+Texture shipmidtdexp;
 
 void Ship_placement(int b[size+2][size+2]) {
     int l = 0;      //count 4 ships
@@ -513,9 +466,409 @@ bool isSunk(int x, int y, int Grid[size+2][size+2], int size) {
     return true;
 }
 
+void drawGrid(RenderWindow& window, int grid[size + 2][size + 2], bool isPlayerGrid) {
+    Sprite cell;
+    cell.setPosition(sf::Vector2f(cellSize, cellSize));
+
+    float x_offset = 0.f;
+    if (!isPlayerGrid) {
+        x_offset = (size + 2) * cellSize;
+        for (int x = 0; x < size + 2; x++) {
+            for (int y = 0; y < size + 2; y++) {
+                cell.setPosition(x * cellSize + x_offset, y * cellSize);
+                if (computerGrid[x][y] == 0 || computerGrid[x][y] == 1) { // неоткрытая ячейка или корабль компьютера
+                    cell.setTexture(sea);
+                }
+                else if (computerGrid[x][y] == 2) { // промах
+                    cell.setTexture(miss);
+                }
+                else if (computerGrid[x][y] == 3) { // попадание
+                    cell.setTexture(explosion);
+                }
+                else if (computerGrid[x][y] == 4
+                    && computerGrid[x + 1][y] != 1
+                    && computerGrid[x - 1][y] != 1
+                    && computerGrid[x][y + 1] != 1
+                    && computerGrid[x][y - 1] != 1
+                    && computerGrid[x + 1][y] != 3
+                    && computerGrid[x - 1][y] != 3
+                    && computerGrid[x][y + 1] != 3
+                    && computerGrid[x][y - 1] != 3
+                    && computerGrid[x + 1][y] != 4
+                    && computerGrid[x - 1][y] != 4
+                    && computerGrid[x][y + 1] != 4
+                    && computerGrid[x][y - 1] != 4) { // палуба корабля
+                    cell.setTexture(ship1exp);
+                }
+                else if (computerGrid[x][y] == 4
+                    && (computerGrid[x + 1][y] == 1
+                        || computerGrid[x + 1][y] == 3
+                        || computerGrid[x + 1][y] == 4)
+                    && computerGrid[x - 1][y] != 1
+                    && computerGrid[x][y + 1] != 1
+                    && computerGrid[x][y - 1] != 1
+                    && computerGrid[x - 1][y] != 3
+                    && computerGrid[x][y + 1] != 3
+                    && computerGrid[x][y - 1] != 3
+                    && computerGrid[x - 1][y] != 4
+                    && computerGrid[x][y + 1] != 4
+                    && computerGrid[x][y - 1] != 4) { // палуба корабля
+                    cell.setTexture(shipedgerexp);
+                }
+                else if (computerGrid[x][y] == 4
+                    && (computerGrid[x - 1][y] == 1
+                        || computerGrid[x - 1][y] == 3
+                        || computerGrid[x - 1][y] == 4)
+                    && computerGrid[x + 1][y] != 1
+                    && computerGrid[x][y + 1] != 1
+                    && computerGrid[x][y - 1] != 1
+                    && computerGrid[x + 1][y] != 3
+                    && computerGrid[x][y + 1] != 3
+                    && computerGrid[x][y - 1] != 3
+                    && computerGrid[x + 1][y] != 4
+                    && computerGrid[x][y + 1] != 4
+                    && computerGrid[x][y - 1] != 4) { // палуба корабля
+                    cell.setTexture(shipedgelexp);
+                }
+                else if (computerGrid[x][y] == 4
+                    && (computerGrid[x][y - 1] == 1
+                        || computerGrid[x][y - 1] == 3
+                        || computerGrid[x][y - 1] == 4)
+                    && computerGrid[x - 1][y] != 1
+                    && computerGrid[x][y + 1] != 1
+                    && computerGrid[x + 1][y] != 1
+                    && computerGrid[x - 1][y] != 3
+                    && computerGrid[x][y + 1] != 3
+                    && computerGrid[x + 1][y] != 3
+                    && computerGrid[x - 1][y] != 4
+                    && computerGrid[x][y + 1] != 4
+                    && computerGrid[x + 1][y] != 4) { // палуба корабля
+                    cell.setTexture(shipedgetexp);
+                }
+                else if (computerGrid[x][y] == 4
+                    && (computerGrid[x][y + 1] == 1
+                        || computerGrid[x][y + 1] == 3
+                        || computerGrid[x][y + 1] == 4)
+                    && computerGrid[x - 1][y] != 1
+                    && computerGrid[x + 1][y] != 1
+                    && computerGrid[x][y - 1] != 1
+                    && computerGrid[x - 1][y] != 3
+                    && computerGrid[x + 1][y] != 3
+                    && computerGrid[x][y - 1] != 3
+                    && computerGrid[x - 1][y] != 4
+                    && computerGrid[x + 1][y] != 4
+                    && computerGrid[x][y - 1] != 4) { // палуба корабля
+                    cell.setTexture(shipedgedexp);
+                }
+                else if (computerGrid[x][y] == 4
+                    && computerGrid[x][y + 1] != 1
+                    && computerGrid[x][y - 1] != 1
+                    && computerGrid[x][y + 1] != 3
+                    && computerGrid[x][y - 1] != 3
+                    && computerGrid[x][y + 1] != 4
+                    && computerGrid[x][y - 1] != 4
+                    && ((computerGrid[x + 1][y] == 1
+                        && computerGrid[x - 1][y] == 1)
+                        || (computerGrid[x + 1][y] == 3
+                            && computerGrid[x - 1][y] == 3)
+                        || (computerGrid[x + 1][y] == 1
+                            && computerGrid[x - 1][y] == 3)
+                        || (computerGrid[x + 1][y] == 3
+                            && computerGrid[x - 1][y] == 1)
+                        || (computerGrid[x + 1][y] == 4
+                            && computerGrid[x - 1][y] == 4))) { // палуба корабля
+                    cell.setTexture(shipmidlrexp);
+                }
+                else if (computerGrid[x][y] == 4
+                    && computerGrid[x + 1][y] != 1
+                    && computerGrid[x - 1][y] != 1
+                    && computerGrid[x + 1][y] != 3
+                    && computerGrid[x - 1][y] != 3
+                    && computerGrid[x + 1][y] != 4
+                    && computerGrid[x - 1][y] != 4
+                    && ((computerGrid[x][y + 1] == 1
+                        && computerGrid[x][y - 1] == 1)
+                        || (computerGrid[x][y + 1] == 3
+                            && computerGrid[x][y - 1] == 3)
+                        || (computerGrid[x][y + 1] == 1
+                            && computerGrid[x][y - 1] == 3)
+                        || (computerGrid[x][y + 1] == 3
+                            && computerGrid[x][y - 1] == 1)
+                        || (computerGrid[x][y + 1] == 4
+                            && computerGrid[x][y - 1] == 4))) { // палуба корабля
+                    cell.setTexture(shipmidtdexp);
+                }
+                else if (computerGrid[x][y] == -1) {
+                    cell.setTexture(sand);
+                }
+                window.draw(cell);
+            }
+        }
+    }
+
+    for (int x = 0; x < size + 2; x++) {
+        for (int y = 0; y < size + 2; y++) {
+            cell.setPosition(x * cellSize, y * cellSize);
+            if (playerGrid[x][y] == 0) { // неоткрытая ячейка
+                cell.setTexture(sea);
+            }
+            else if (playerGrid[x][y] == 1 
+                && playerGrid[x + 1][y] != 1 
+                && playerGrid[x - 1][y] != 1 
+                && playerGrid[x][y + 1] != 1 
+                && playerGrid[x][y - 1] != 1
+                && playerGrid[x + 1][y] != 3
+                && playerGrid[x - 1][y] != 3
+                && playerGrid[x][y + 1] != 3
+                && playerGrid[x][y - 1] != 3
+                && playerGrid[x + 1][y] != 4
+                && playerGrid[x - 1][y] != 4
+                && playerGrid[x][y + 1] != 4
+                && playerGrid[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(ship1);
+            }
+            else if (playerGrid[x][y] == 4
+                && playerGrid[x + 1][y] != 1
+                && playerGrid[x - 1][y] != 1
+                && playerGrid[x][y + 1] != 1
+                && playerGrid[x][y - 1] != 1
+                && playerGrid[x + 1][y] != 3
+                && playerGrid[x - 1][y] != 3
+                && playerGrid[x][y + 1] != 3
+                && playerGrid[x][y - 1] != 3
+                && playerGrid[x + 1][y] != 4
+                && playerGrid[x - 1][y] != 4
+                && playerGrid[x][y + 1] != 4
+                && playerGrid[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(ship1exp);
+            }
+            else if (playerGrid[x][y] == 1 
+                && (playerGrid[x + 1][y] == 1
+                    || playerGrid[x + 1][y] == 3)
+                && playerGrid[x - 1][y] != 1 
+                && playerGrid[x][y + 1] != 1 
+                && playerGrid[x][y - 1] != 1 
+                && playerGrid[x - 1][y] != 3 
+                && playerGrid[x][y + 1] != 3 
+                && playerGrid[x][y - 1] != 3
+                && playerGrid[x - 1][y] != 4
+                && playerGrid[x][y + 1] != 4
+                && playerGrid[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedger);
+            }
+            else if (playerGrid[x][y] == 1
+                && (playerGrid[x - 1][y] == 1
+                    || playerGrid[x - 1][y] == 3)
+                && playerGrid[x + 1][y] != 1
+                && playerGrid[x][y + 1] != 1
+                && playerGrid[x][y - 1] != 1
+                && playerGrid[x + 1][y] != 3
+                && playerGrid[x][y + 1] != 3
+                && playerGrid[x][y - 1] != 3
+                && playerGrid[x + 1][y] != 4
+                && playerGrid[x][y + 1] != 4
+                && playerGrid[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedgel);
+            }
+            else if (playerGrid[x][y] == 1
+                && (playerGrid[x][y - 1] == 1
+                    || playerGrid[x][y - 1] == 3)
+                && playerGrid[x - 1][y] != 1
+                && playerGrid[x][y + 1] != 1
+                && playerGrid[x + 1][y] != 1
+                && playerGrid[x - 1][y] != 3
+                && playerGrid[x][y + 1] != 3
+                && playerGrid[x + 1][y] != 3
+                && playerGrid[x - 1][y] != 4
+                && playerGrid[x][y + 1] != 4
+                && playerGrid[x + 1][y] != 4) { // палуба корабля
+                cell.setTexture(shipedget);
+            }
+            else if (playerGrid[x][y] == 1
+                && (playerGrid[x][y + 1] == 1
+                    || playerGrid[x][y + 1] == 3)
+                && playerGrid[x - 1][y] != 1
+                && playerGrid[x + 1][y] != 1
+                && playerGrid[x][y - 1] != 1
+                && playerGrid[x - 1][y] != 3
+                && playerGrid[x + 1][y] != 3
+                && playerGrid[x][y - 1] != 3
+                && playerGrid[x - 1][y] != 4
+                && playerGrid[x + 1][y] != 4
+                && playerGrid[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedged);
+            }
+
+            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
+                && (playerGrid[x + 1][y] == 1
+                    || playerGrid[x + 1][y] == 3
+                    || playerGrid[x + 1][y] == 4)
+                && playerGrid[x - 1][y] != 1
+                && playerGrid[x][y + 1] != 1
+                && playerGrid[x][y - 1] != 1
+                && playerGrid[x - 1][y] != 3
+                && playerGrid[x][y + 1] != 3
+                && playerGrid[x][y - 1] != 3
+                && playerGrid[x - 1][y] != 4
+                && playerGrid[x][y + 1] != 4
+                && playerGrid[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedgerexp);
+            }
+            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
+                && (playerGrid[x - 1][y] == 1
+                    || playerGrid[x - 1][y] == 3
+                    || playerGrid[x - 1][y] == 4)
+                && playerGrid[x + 1][y] != 1
+                && playerGrid[x][y + 1] != 1
+                && playerGrid[x][y - 1] != 1
+                && playerGrid[x + 1][y] != 3
+                && playerGrid[x][y + 1] != 3
+                && playerGrid[x][y - 1] != 3
+                && playerGrid[x + 1][y] != 4
+                && playerGrid[x][y + 1] != 4
+                && playerGrid[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedgelexp);
+            }
+            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
+                && (playerGrid[x][y - 1] == 1
+                    || playerGrid[x][y - 1] == 3
+                    || playerGrid[x][y - 1] == 4)
+                && playerGrid[x - 1][y] != 1
+                && playerGrid[x][y + 1] != 1
+                && playerGrid[x + 1][y] != 1
+                && playerGrid[x - 1][y] != 3
+                && playerGrid[x][y + 1] != 3
+                && playerGrid[x + 1][y] != 3
+                && playerGrid[x - 1][y] != 4
+                && playerGrid[x][y + 1] != 4
+                && playerGrid[x + 1][y] != 4) { // палуба корабля
+                cell.setTexture(shipedgetexp);
+            }
+            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
+                && (playerGrid[x][y + 1] == 1
+                    || playerGrid[x][y + 1] == 3
+                    || playerGrid[x][y + 1] == 4)
+                && playerGrid[x - 1][y] != 1
+                && playerGrid[x + 1][y] != 1
+                && playerGrid[x][y - 1] != 1
+                && playerGrid[x - 1][y] != 3
+                && playerGrid[x + 1][y] != 3
+                && playerGrid[x][y - 1] != 3
+                && playerGrid[x - 1][y] != 4
+                && playerGrid[x + 1][y] != 4
+                && playerGrid[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedgedexp);
+            }
+
+            else if (playerGrid[x][y] == 1 
+                && playerGrid[x][y + 1] != 1
+                && playerGrid[x][y - 1] != 1
+                && playerGrid[x][y + 1] != 3
+                && playerGrid[x][y - 1] != 3
+                && playerGrid[x][y + 1] != 4
+                && playerGrid[x][y - 1] != 4
+                && ((playerGrid[x + 1][y] == 1
+                && playerGrid[x - 1][y] == 1)
+                || (playerGrid[x + 1][y] == 3
+                && playerGrid[x - 1][y] == 3)
+                || (playerGrid[x + 1][y] == 1
+                && playerGrid[x - 1][y] == 3)
+                || (playerGrid[x + 1][y] == 3
+                && playerGrid[x - 1][y] == 1))) { // палуба корабля
+                cell.setTexture(shipmidlr);
+            }
+            else if (playerGrid[x][y] == 1 
+                && playerGrid[x + 1][y] != 1
+                && playerGrid[x - 1][y] != 1
+                && playerGrid[x + 1][y] != 3
+                && playerGrid[x - 1][y] != 3
+                && playerGrid[x + 1][y] != 4
+                && playerGrid[x - 1][y] != 4
+                && ((playerGrid[x][y + 1] == 1
+                && playerGrid[x][y - 1] == 1)
+                || (playerGrid[x][y + 1] == 3
+                && playerGrid[x][y - 1] == 3)
+                || (playerGrid[x][y + 1] == 1
+                && playerGrid[x][y - 1] == 3)
+                || (playerGrid[x][y + 1] == 3
+                && playerGrid[x][y - 1] == 1))) { // палуба корабля
+                cell.setTexture(shipmidtd);
+            }
+
+            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
+                && playerGrid[x][y + 1] != 1
+                && playerGrid[x][y - 1] != 1
+                && playerGrid[x][y + 1] != 3
+                && playerGrid[x][y - 1] != 3
+                && playerGrid[x][y + 1] != 4
+                && playerGrid[x][y - 1] != 4
+                && ((playerGrid[x + 1][y] == 1
+                && playerGrid[x - 1][y] == 1)
+                || (playerGrid[x + 1][y] == 3
+                && playerGrid[x - 1][y] == 3)
+                || (playerGrid[x + 1][y] == 1
+                && playerGrid[x - 1][y] == 3)
+                || (playerGrid[x + 1][y] == 3
+                && playerGrid[x - 1][y] == 1)
+                || (playerGrid[x + 1][y] == 4
+                && playerGrid[x - 1][y] == 4))) { // палуба корабля
+                    cell.setTexture(shipmidlrexp);
+                    }
+            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
+                && playerGrid[x + 1][y] != 1
+                && playerGrid[x - 1][y] != 1
+                && playerGrid[x + 1][y] != 3
+                && playerGrid[x - 1][y] != 3
+                && playerGrid[x + 1][y] != 4
+                && playerGrid[x - 1][y] != 4
+                && ((playerGrid[x][y + 1] == 1
+                && playerGrid[x][y - 1] == 1)
+                || (playerGrid[x][y + 1] == 3
+                && playerGrid[x][y - 1] == 3)
+                || (playerGrid[x][y + 1] == 1
+                && playerGrid[x][y - 1] == 3)
+                || (playerGrid[x][y + 1] == 3
+                && playerGrid[x][y - 1] == 1)
+                || (playerGrid[x][y + 1] == 4
+                && playerGrid[x][y - 1] == 4))) { // палуба корабля
+                    cell.setTexture(shipmidtdexp);
+                    }
+
+            else if (playerGrid[x][y] == 2) { // промах
+                cell.setTexture(miss);
+            }
+            else if (playerGrid[x][y] == -1) { // попадание
+                cell.setTexture(sand);
+            }
+            window.draw(cell);
+        }
+    }
+}
+
 void timer() {
     clock_t start_time = clock(); // Получение текущего времени
     while (clock() < start_time + 0.5 * CLOCKS_PER_SEC) {} // Ожидание 2 секунд
+}
+
+void init() {
+    sea.loadFromFile("../resources/sea.jpg");
+    sand.loadFromFile("../resources/sand.jpg");
+    miss.loadFromFile("../resources/miss.jpg");
+    ship1.loadFromFile("../resources/ship1.jpg");
+    ship1exp.loadFromFile("../resources/ship1exp.jpg");
+    shipedger.loadFromFile("../resources/shipedge(r).jpg");
+    shipedgerexp.loadFromFile("../resources/shipedge(r)exp.jpg");
+    shipedgel.loadFromFile("../resources/shipedge(l).jpg");
+    shipedgelexp.loadFromFile("../resources/shipedge(l)exp.jpg");
+    shipedget.loadFromFile("../resources/shipedge(t).jpg");
+    shipedgetexp.loadFromFile("../resources/shipedge(t)exp.jpg");
+    shipedged.loadFromFile("../resources/shipedge(d).jpg");
+    shipedgedexp.loadFromFile("../resources/shipedge(d)exp.jpg");
+    shipmidlr.loadFromFile("../resources/shipmid(lr).jpg");
+    shipmidlrexp.loadFromFile("../resources/shipmid(lr)exp.jpg");
+    shipmidtd.loadFromFile("../resources/shipmid(td).jpg");
+    shipmidtdexp.loadFromFile("../resources/shipmid(td)exp.jpg");
+    explosion.loadFromFile("../resources/explosion.jpg");
 }
 
 int main() {
@@ -543,6 +896,8 @@ int main() {
 
     // рандомно размещаем корабли компьютера
     srand(time(NULL));
+
+    init();
 
     Ship_placement(computerGrid);
     Ship_placement(playerGrid);
