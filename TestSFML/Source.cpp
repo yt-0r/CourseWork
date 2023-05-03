@@ -42,7 +42,7 @@ void Ship_placement(int b[size+2][size+2]) {
     while (l < 1) {
         int i = rand() % size + 1; int j = rand() % size + 1;
         b[i][j] = 1;
-        if ((i >= 3 && i <= 6) && (j > 2 && j < 7)) {
+        if ((i >= 4 && i <= 7) && (j >= 4 && j <= 7)) {
             int v = rand() % 2;
             if (v == 0) {    //vertical
                 int r = rand() % 2;   //down 0, up 1
@@ -67,7 +67,7 @@ void Ship_placement(int b[size+2][size+2]) {
                 }
             }
         }
-        if ((i >= 0 && i <= 6) && (j >= 0 && j <= 2)) {
+        if ((i >= 1 && i <= 7) && (j >= 1 && j <= 3)) {
             int v = rand() % 2;     //down 0, right 1
             if (v == 0) {     //down
                 b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
@@ -78,7 +78,7 @@ void Ship_placement(int b[size+2][size+2]) {
                 l += 1;
             }
         }
-        if ((i >= 7 && i <= 9) && (j >= 0 && j <= 6)) {
+        if ((i >= 8 && i <= 10) && (j >= 1 && j <= 7)) {
             int v = rand() % 2;     //up 0, right 1
             if (v == 0) {     //up
                 b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
@@ -89,7 +89,7 @@ void Ship_placement(int b[size+2][size+2]) {
                 l += 1;
             }
         }
-        if ((i >= 3 && i <= 9) && (j >= 7 && j <= 9)) {
+        if ((i >= 4 && i <= 10) && (j >= 8 && j <= 10)) {
             int v = rand() % 2;     //up 0, left 1
             if (v == 0) {     //up
                 b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
@@ -101,7 +101,7 @@ void Ship_placement(int b[size+2][size+2]) {
             }
 
         }
-        if ((i >= 0 && i <= 2) && (j >= 3 && j <= 9)) {
+        if ((i >= 1 && i <= 3) && (j >= 4 && j <= 10)) {
             int v = rand() % 2;     //down 0, left 1
             if (v == 0) {     //down
                 b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
@@ -120,7 +120,7 @@ void Ship_placement(int b[size+2][size+2]) {
         int i = rand() % size + 1; int j = rand() % size + 1;
         if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
         else {
-            if (i >= 2 && i <= 7 && j >= 2 && j <= 7) {
+            if (i >= 3 && i <= 8 && j >= 3 && j <= 8) {
                 int v = rand() % 2;     //vertical 0, horizont 1
                 if (v == 0) {    //vertical
                     int r = rand() % 2;   //down 0, up 1
@@ -161,7 +161,7 @@ void Ship_placement(int b[size+2][size+2]) {
                     }
                 }
             }
-            if (i >= 0 && i <= 7 && j >= 0 && j <= 1) {
+            if (i >= 1 && i <= 8 && j >= 1 && j <= 2) {
                 int v = rand() % 2;     //down 0, right 1
                 if (v == 0) {   //down
                     if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
@@ -180,7 +180,7 @@ void Ship_placement(int b[size+2][size+2]) {
                     }
                 }
             }
-            if (i >= 8 && i <= 9 && j >= 0 && j <= 7) {
+            if (i >= 9 && i <= 10 && j >= 1 && j <= 8) {
                 int v = rand() % 2;     //up 0, right 1
                 if (v == 0) {       //up
                     if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
@@ -199,7 +199,7 @@ void Ship_placement(int b[size+2][size+2]) {
                     }
                 }
             }
-            if (i >= 1 && i <= 9 && j >= 8 && j <= 9) {
+            if (i >= 3 && i <= 10 && j >= 9 && j <= 10) {
                 int v = rand() % 2;     //up 0, left 1
                 if (v == 0) {   //up
                     if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
@@ -218,7 +218,7 @@ void Ship_placement(int b[size+2][size+2]) {
                     }
                 }
             }
-            if (i >= 0 && i <= 1 && j>=1 && j<=9) {
+            if (i >= 1 && i <= 2 && j >= 3 && j <= 10) {
                 int v = rand() % 2;      //down 0, left 1
                 if (v == 0) {   //down
                     if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
@@ -244,7 +244,7 @@ void Ship_placement(int b[size+2][size+2]) {
         int i = rand() % size + 1; int j = rand() % size + 1;
         if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
         else {
-            if (i >= 1 && i <= 8 && j >= 1 && j <= 8) {
+            if (i >= 2 && i <= 9 && j >= 2 && j <= 9) {
                 int v = rand() % 2;     //vertical 0, horizont 1
                 if (v == 0) {    //vertical
                     int r = rand() % 2;   //down 0, up 1
@@ -285,7 +285,7 @@ void Ship_placement(int b[size+2][size+2]) {
                     }
                 }
             }
-            if (i >= 0 && i <= 8 && j == 0) {
+            if (i >= 1 && i <= 9 && j == 1) {
                 int v = rand() % 2;     //down 0, right 1
                 if (v == 0) {   //down
                     if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
@@ -304,7 +304,7 @@ void Ship_placement(int b[size+2][size+2]) {
                     }
                 }
             }
-            if (i == 9 && j >= 0 && j <= 8) {
+            if (i == 10 && j >= 1 && j <= 9) {
                 int v = rand() % 2;     //up 0, right 1
                 if (v == 0) {       //up
                     if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
@@ -323,7 +323,7 @@ void Ship_placement(int b[size+2][size+2]) {
                     }
                 }
             }
-            if (i >= 1 && i <= 9 && j == 9) {
+            if (i >= 2 && i <= 10 && j == 10) {
                 int v = rand() % 2;     //up 0, left 1
                 if (v == 0) {   //up
                     if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
@@ -342,7 +342,7 @@ void Ship_placement(int b[size+2][size+2]) {
                     }
                 }
             }
-            if (i == 0 && j >= 1 && j <= 9) {
+            if (i == 1 && j >= 2 && j <= 10) {
                 int v = rand() % 2;      //down 0, left 1
                 if (v == 0) {   //down
                     if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
