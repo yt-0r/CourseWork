@@ -1,6 +1,7 @@
 #pragma warning(disable:4244)
 #pragma warning(disable:6385)
 #include <Graphics.hpp>
+#include <Audio.hpp>
 #include <iostream>
 #include <cmath>
 #include <ctime>
@@ -36,6 +37,8 @@ Texture shipmidlr;
 Texture shipmidlrexp;
 Texture shipmidtd;
 Texture shipmidtdexp;
+Sound shoot;
+SoundBuffer buffer;
 
 void Ship_placement(int b[size+2][size+2]) {
     int l = 0;      //count 4 ships
@@ -848,28 +851,30 @@ void drawGrid(RenderWindow& window, int grid[size + 2][size + 2], bool isPlayerG
 
 void timer() {
     clock_t start_time = clock(); // Получение текущего времени
-    while (clock() < start_time + 0.5 * CLOCKS_PER_SEC) {} // Ожидание 2 секунд
+    while (clock() < start_time + 2 * CLOCKS_PER_SEC) {} // Ожидание 2 секунд
 }
 
 void init() {
-    sea.loadFromFile("../resources/sea.jpg");
-    sand.loadFromFile("../resources/sand.jpg");
-    miss.loadFromFile("../resources/miss.jpg");
-    ship1.loadFromFile("../resources/ship1.jpg");
-    ship1exp.loadFromFile("../resources/ship1exp.jpg");
-    shipedger.loadFromFile("../resources/shipedge(r).jpg");
-    shipedgerexp.loadFromFile("../resources/shipedge(r)exp.jpg");
-    shipedgel.loadFromFile("../resources/shipedge(l).jpg");
-    shipedgelexp.loadFromFile("../resources/shipedge(l)exp.jpg");
-    shipedget.loadFromFile("../resources/shipedge(t).jpg");
-    shipedgetexp.loadFromFile("../resources/shipedge(t)exp.jpg");
-    shipedged.loadFromFile("../resources/shipedge(d).jpg");
-    shipedgedexp.loadFromFile("../resources/shipedge(d)exp.jpg");
-    shipmidlr.loadFromFile("../resources/shipmid(lr).jpg");
-    shipmidlrexp.loadFromFile("../resources/shipmid(lr)exp.jpg");
-    shipmidtd.loadFromFile("../resources/shipmid(td).jpg");
-    shipmidtdexp.loadFromFile("../resources/shipmid(td)exp.jpg");
-    explosion.loadFromFile("../resources/explosion.jpg");
+    sea.loadFromFile("../resources/textures/sea.jpg");
+    sand.loadFromFile("../resources/textures/sand.jpg");
+    miss.loadFromFile("../resources/textures/miss.jpg");
+    ship1.loadFromFile("../resources/textures/ship1.jpg");
+    ship1exp.loadFromFile("../resources/textures/ship1exp.jpg");
+    shipedger.loadFromFile("../resources/textures/shipedge(r).jpg");
+    shipedgerexp.loadFromFile("../resources/textures/shipedge(r)exp.jpg");
+    shipedgel.loadFromFile("../resources/textures/shipedge(l).jpg");
+    shipedgelexp.loadFromFile("../resources/textures/shipedge(l)exp.jpg");
+    shipedget.loadFromFile("../resources/textures/shipedge(t).jpg");
+    shipedgetexp.loadFromFile("../resources/textures/shipedge(t)exp.jpg");
+    shipedged.loadFromFile("../resources/textures/shipedge(d).jpg");
+    shipedgedexp.loadFromFile("../resources/textures/shipedge(d)exp.jpg");
+    shipmidlr.loadFromFile("../resources/textures/shipmid(lr).jpg");
+    shipmidlrexp.loadFromFile("../resources/textures/shipmid(lr)exp.jpg");
+    shipmidtd.loadFromFile("../resources/textures/shipmid(td).jpg");
+    shipmidtdexp.loadFromFile("../resources/textures/shipmid(td)exp.jpg");
+    explosion.loadFromFile("../resources/textures/explosion.jpg");
+    buffer.loadFromFile("../resources/sfx/shoot.wav");
+    shoot.setBuffer(buffer);
 }
 
 void zeroGrid() {
@@ -948,11 +953,13 @@ int main() {
                     computerGrid[x][y] = 3;
                     win += 1;
                     isPaused = 1;
+                    shoot.play();
                 }
                 else if (computerGrid[x][y] == 0) { // промах
                     computerGrid[x][y] = 2;
                     isPlayerTurn = false;
                     isPaused = 1;
+                    shoot.play();
                 }
             }
         }
@@ -1006,11 +1013,13 @@ int main() {
                     playerGrid[x][y] = 3;
                     lose += 1;
                     isPaused = 1;
+                    shoot.play();
                 }
                 else { // промах
                     playerGrid[x][y] = 2;
                     isPlayerTurn = true;
                     isPaused = 0;
+                    shoot.play();
                 }
 
             }
@@ -1026,11 +1035,13 @@ int main() {
                     playerGrid[x][y] = 3;
                     lose += 1;
                     isPaused = 1;
+                    shoot.play();
                 }
                 else { // промах
                     playerGrid[x][y] = 2;
                     isPlayerTurn = true;
                     isPaused = 0;
+                    shoot.play();
                 }
 
             }
