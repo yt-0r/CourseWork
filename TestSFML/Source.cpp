@@ -982,11 +982,12 @@ int main() {
         drawGrid(window, playerGrid, true); // рисуем поле игрока
         drawGrid(window, computerGrid, false); // рисуем поле компьютера
         window.display();
-        
+        if (isPaused == 1) {
+            timer();
+            isPaused = 0;
+        }
         if (!isPlayerTurn) { // если сейчас ход компьютера
-            if (isPaused == 1) {
-                timer();
-            }
+            
             bool flaggg = 0;
 
             for (int x = 1; x < size+1; x++) {
@@ -1018,7 +1019,7 @@ int main() {
                 else { // промах
                     playerGrid[x][y] = 2;
                     isPlayerTurn = true;
-                    isPaused = 0;
+                    isPaused = 1;
                     shoot.play();
                 }
 
@@ -1040,7 +1041,7 @@ int main() {
                 else { // промах
                     playerGrid[x][y] = 2;
                     isPlayerTurn = true;
-                    isPaused = 0;
+                    isPaused = 1;
                     shoot.play();
                 }
 
