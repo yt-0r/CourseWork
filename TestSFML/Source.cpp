@@ -5,17 +5,13 @@
 #include <iostream>
 #include <cmath>
 #include <ctime>
+#include "Header.h"
 
 using namespace sf;
 
-const int cellSize = 50; // размер ячеек
-const int size = 10; // размер поля
 int win = 0;
 int lose = 0;
 bool isPaused = 0;
-
-int playerGrid[size+2][size+2]; // игровое поле игрока
-int computerGrid[size+2][size+2]; // игровое поле компьютера
 
 bool isPlayerTurn = true; // ход игрока
 
@@ -40,821 +36,7 @@ Texture shipmidtdexp;
 Sound shoot;
 SoundBuffer buffer;
 
-void Ship_placement(int b[size+2][size+2]) {
-    int l = 0;      //count 4 ships
-    while (l < 1) {
-        int i = rand() % size + 1; int j = rand() % size + 1;
-        b[i][j] = 1;
-        if ((i >= 4 && i <= 7) && (j >= 4 && j <= 7)) {
-            int v = rand() % 2;
-            if (v == 0) {    //vertical
-                int r = rand() % 2;   //down 0, up 1
-                if (r == 0) {    //down
-                    b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
-                    l += 1;
-                }
-                if (r == 1) {   //up
-                    b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
-                    l += 1;
-                }
-            }
-            if (v == 1) {   //horizont
-                int r = rand() % 2;   //left 0, right 1
-                if (r == 0) {      //left
-                    b[i][j - 1] = 1; b[i][j - 2] = 1; b[i][j - 3] = 1;
-                    l += 1;
-                }
-                if (r == 1) {   //right
-                    b[i][j + 1] = 1; b[i][j + 2] = 1; b[i][j + 3] = 1;
-                    l += 1;
-                }
-            }
-        }
-        if ((i >= 1 && i <= 7) && (j >= 1 && j <= 3)) {
-            int v = rand() % 2;     //down 0, right 1
-            if (v == 0) {     //down
-                b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
-                l += 1;
-            }
-            if (v == 1) {     //right
-                b[i][j + 1] = 1; b[i][j + 2] = 1; b[i][j + 3] = 1;
-                l += 1;
-            }
-        }
-        if ((i >= 8 && i <= 10) && (j >= 1 && j <= 7)) {
-            int v = rand() % 2;     //up 0, right 1
-            if (v == 0) {     //up
-                b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
-                l += 1;
-            }
-            if (v == 1) {     //right
-                b[i][j + 1] = 1; b[i][j + 2] = 1; b[i][j + 3] = 1;
-                l += 1;
-            }
-        }
-        if ((i >= 4 && i <= 10) && (j >= 8 && j <= 10)) {
-            int v = rand() % 2;     //up 0, left 1
-            if (v == 0) {     //up
-                b[i - 1][j] = 1; b[i - 2][j] = 1; b[i - 3][j] = 1;
-                l += 1;
-            }
-            if (v == 1) {     //left
-                b[i][j - 1] = 1; b[i][j - 2] = 1; b[i][j - 3] = 1;
-                l += 1;
-            }
-
-        }
-        if ((i >= 1 && i <= 3) && (j >= 4 && j <= 10)) {
-            int v = rand() % 2;     //down 0, left 1
-            if (v == 0) {     //down
-                b[i + 1][j] = 1; b[i + 2][j] = 1; b[i + 3][j] = 1;
-                l += 1;
-            }
-            if (v == 1) {     //left
-                b[i][j - 1] = 1; b[i][j - 2] = 1; b[i][j - 3] = 1;
-                l += 1;
-            }
-        }
-
-
-    }
-    l = 0;      //count 3 ships
-    while (l < 2) {
-        int i = rand() % size + 1; int j = rand() % size + 1;
-        if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
-        else {
-            if (i >= 3 && i <= 8 && j >= 3 && j <= 8) {
-                int v = rand() % 2;     //vertical 0, horizont 1
-                if (v == 0) {    //vertical
-                    int r = rand() % 2;   //down 0, up 1
-                    if (r == 0) {    //down
-                        if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
-                        else {
-                            b[i][j] = 1; b[i + 1][j] = 1; b[i + 2][j] = 1;
-                            l += 1;
-                            continue;
-                        }
-                    }
-                    if (r == 1) {   //up
-                        if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
-                        else {
-                            b[i][j] = 1; b[i - 1][j] = 1; b[i - 2][j] = 1;
-                            l += 1;
-                            continue;
-                        }
-                    }
-                }
-                if (v == 1) {   //horizont
-                    int r = rand() % 2;   //left 0, right 1
-                    if (r == 0) {       //left
-                        if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1) or (b[i - 1][j - 3] == 1) or (b[i][j - 3] == 1) or (b[i + 1][j - 3] == 1)) continue;
-                        else {
-                            b[i][j] = 1; b[i][j - 1] = 1; b[i][j - 2] = 1;
-                            l += 1;
-                            continue;
-                        }
-                    }
-                    if (r == 1) {       //right
-                        if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1) or (b[i - 1][j + 3] == 1) or (b[i][j + 3] == 1) or (b[i + 1][j + 3] == 1)) continue;
-                        else {
-                            b[i][j] = 1; b[i][j + 1] = 1; b[i][j + 2] = 1;
-                            l += 1;
-                            continue;
-                        }
-                    }
-                }
-            }
-            if (i >= 1 && i <= 8 && j >= 1 && j <= 2) {
-                int v = rand() % 2;     //down 0, right 1
-                if (v == 0) {   //down
-                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i + 1][j] = 1; b[i + 2][j] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-                if (v == 1) {   //right
-                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1) or (b[i - 1][j + 3] == 1) or (b[i][j + 3] == 1) or (b[i + 1][j + 3] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i][j + 1] = 1; b[i][j + 2] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-            }
-            if (i >= 9 && i <= 10 && j >= 1 && j <= 8) {
-                int v = rand() % 2;     //up 0, right 1
-                if (v == 0) {       //up
-                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i - 1][j] = 1; b[i - 2][j] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-                if (v == 1) {       //right
-                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1) or (b[i - 1][j + 3] == 1) or (b[i][j + 3] == 1) or (b[i + 1][j + 3] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i][j + 1] = 1; b[i][j + 2] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-            }
-            if (i >= 3 && i <= 10 && j >= 9 && j <= 10) {
-                int v = rand() % 2;     //up 0, left 1
-                if (v == 0) {   //up
-                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1) or (b[i - 3][j - 1] == 1) or (b[i - 3][j] == 1) or (b[i - 3][j + 1] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i - 1][j] = 1; b[i - 2][j] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-                if (v == 1) {   //left
-                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1) or (b[i - 1][j - 3] == 1) or (b[i][j - 3] == 1) or (b[i + 1][j - 3] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i][j - 1] = 1; b[i][j - 2] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-            }
-            if (i >= 1 && i <= 2 && j >= 3 && j <= 10) {
-                int v = rand() % 2;      //down 0, left 1
-                if (v == 0) {   //down
-                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1) or (b[i + 3][j - 1] == 1) or (b[i + 3][j] == 1) or (b[i + 3][j + 1] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i + 1][j] = 1; b[i + 2][j] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-                if (v == 1) {  //left
-                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1) or (b[i - 1][j - 3] == 1) or (b[i][j - 3] == 1) or (b[i + 1][j - 3] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i][j - 1] = 1; b[i][j - 2] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-            }
-        }
-    }
-    l = 0;      //count 2 ships
-    while (l < 3) {
-        int i = rand() % size + 1; int j = rand() % size + 1;
-        if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
-        else {
-            if (i >= 2 && i <= 9 && j >= 2 && j <= 9) {
-                int v = rand() % 2;     //vertical 0, horizont 1
-                if (v == 0) {    //vertical
-                    int r = rand() % 2;   //down 0, up 1
-                    if (r == 0) {    //down
-                        if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
-                        else {
-                            b[i][j] = 1; b[i + 1][j] = 1;
-                            l += 1;
-                            continue;
-                        }
-                    }
-                    if (r == 1) {   //up
-                        if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
-                        else {
-                            b[i][j] = 1; b[i - 1][j] = 1;
-                            l += 1;
-                            continue;
-                        }
-                    }
-                }
-                if (v == 1) {   //horizont
-                    int r = rand() % 2;   //left 0, right 1
-                    if (r == 0) {       //left
-                        if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1)) continue;
-                        else {
-                            b[i][j] = 1; b[i][j - 1] = 1;
-                            l += 1;
-                            continue;
-                        }
-                    }
-                    if (r == 1) {       //right
-                        if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1)) continue;
-                        else {
-                            b[i][j] = 1; b[i][j + 1] = 1;
-                            l += 1;
-                            continue;
-                        }
-                    }
-                }
-            }
-            if (i >= 1 && i <= 9 && j == 1) {
-                int v = rand() % 2;     //down 0, right 1
-                if (v == 0) {   //down
-                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i + 1][j] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-                if (v == 1) {   //right
-                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i][j + 1] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-            }
-            if (i == 10 && j >= 1 && j <= 9) {
-                int v = rand() % 2;     //up 0, right 1
-                if (v == 0) {       //up
-                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i - 1][j] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-                if (v == 1) {       //right
-                    if ((b[i - 1][j + 2] == 1) or (b[i][j + 2] == 1) or (b[i + 1][j + 2] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i][j + 1] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-            }
-            if (i >= 2 && i <= 10 && j == 10) {
-                int v = rand() % 2;     //up 0, left 1
-                if (v == 0) {   //up
-                    if ((b[i - 2][j - 1] == 1) or (b[i - 2][j] == 1) or (b[i - 2][j + 1] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i - 1][j] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-                if (v == 1) {   //left
-                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i][j - 1] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-            }
-            if (i == 1 && j >= 2 && j <= 10) {
-                int v = rand() % 2;      //down 0, left 1
-                if (v == 0) {   //down
-                    if ((b[i + 2][j - 1] == 1) or (b[i + 2][j] == 1) or (b[i + 2][j + 1] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i + 1][j] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-                if (v == 1) {  //left
-                    if ((b[i - 1][j - 2] == 1) or (b[i][j - 2] == 1) or (b[i + 1][j - 2] == 1)) continue;
-                    else {
-                        b[i][j] = 1; b[i][j - 1] = 1;
-                        l += 1;
-                        continue;
-                    }
-                }
-
-            }
-        }
-    }
-    l = 0;      //count 1 ships
-    while (l < 4) {
-        int i = rand() % size + 1; int j = rand() % size + 1;
-        if ((b[i - 1][j - 1] == 1) or (b[i - 1][j] == 1) or (b[i - 1][j + 1] == 1) or (b[i][j - 1] == 1) or (b[i][j] == 1) or (b[i][j + 1] == 1) or (b[i + 1][j - 1] == 1) or (b[i + 1][j] == 1) or (b[i + 1][j + 1] == 1)) continue;
-        else {
-            b[i][j] = 1;
-            l += 1;
-        }
-    }
-}
-
-bool isSunk(int x, int y, int Grid[size+2][size+2], int size) {
-    if (Grid[x + 1][y] != 1) {
-        if (Grid[x + 1][y] == 3 || Grid[x + 1][y] == 4) {
-            if (Grid[x + 2][y] != 1) {
-                if (Grid[x + 2][y] == 3 || Grid[x + 2][y] == 4) {
-                    if (Grid[x + 3][y] != 1) {
-                        if (Grid[x + 3][y] == 3 || Grid[x + 3][y] == 4) {
-                            return true;
-                        }
-                    }
-                    else if (Grid[x + 3][y] == 1) {
-                        return false;
-                    }
-                }
-            }
-            else if (Grid[x + 2][y] == 1) {
-                return false;
-            }
-        }
-    }
-    else if (Grid[x + 1][y] == 1) {
-        return false;
-    }
-    if (Grid[x - 1][y] != 1) {
-        if (Grid[x - 1][y] == 3 || Grid[x - 1][y] == 4) {
-            if (Grid[x - 2][y] != 1) {
-                if (Grid[x - 2][y] == 3 || Grid[x - 2][y] == 4) {
-                    if (Grid[x - 3][y] != 1) {
-                        if (Grid[x - 3][y] == 3 || Grid[x - 3][y] == 4) {
-                            return true;
-                        }
-                    }
-                    else if (Grid[x - 3][y] == 1) {
-                        return false;
-                    }
-                }
-            }
-            else if (Grid[x - 2][y] == 1) {
-                return false;
-            }
-        }
-    }
-    else if (Grid[x - 1][y] == 1) {
-        return false;
-    }
-    if (Grid[x][y + 1] != 1) {
-        if (Grid[x][y + 1] == 3 || Grid[x][y + 1] == 4) {
-            if (Grid[x][y + 2] != 1) {
-                if (Grid[x][y + 2] == 3 || Grid[x][y + 2] == 4) {
-                    if (Grid[x][y + 3] != 1) {
-                        if (Grid[x][y + 3] == 3 || Grid[x][y + 3] == 4) {
-                            return true;
-                        }
-                    }
-                    else if (Grid[x][y + 3] == 1) {
-                        return false;
-                    }
-                }
-            }
-            else if (Grid[x][y + 2] == 1) {
-                return false;
-            }
-        }
-    }
-    else if (Grid[x][y + 1] == 1) {
-        return false;
-    }
-    if (Grid[x][y - 1] != 1) {
-        if (Grid[x][y - 1] == 3 || Grid[x][y - 1] == 4) {
-            if (Grid[x][y - 2] != 1) {
-                if (Grid[x][y - 2] == 3 || Grid[x][y - 2] == 4) {
-                    if (Grid[x][y - 3] != 1) {
-                        if (Grid[x][y - 3] == 3 || Grid[x][y - 3] == 4) {
-                            return true;
-                        }
-                    }
-                    else if (Grid[x][y - 3] == 1) {
-                        return false;
-                    }
-                }
-            }
-            else if (Grid[x][y - 2] == 1) {
-                return false;
-            }
-        }
-    }
-    else if (Grid[x][y - 1] == 1) {
-        return false;
-    }
-    return true;
-}
-
-void drawGrid(RenderWindow& window, int grid[size + 2][size + 2], bool isPlayerGrid) {
-    Sprite cell;
-    cell.setPosition(sf::Vector2f(cellSize, cellSize));
-
-    float x_offset = 0.f;
-    if (!isPlayerGrid) {
-        x_offset = (size + 2) * cellSize;
-        for (int x = 0; x < size + 2; x++) {
-            for (int y = 0; y < size + 2; y++) {
-                cell.setPosition(x * cellSize + x_offset, y * cellSize);
-                if (computerGrid[x][y] == 0 || computerGrid[x][y] == 1) { // неоткрытая ячейка или корабль компьютера
-                    cell.setTexture(sea);
-                }
-                else if (computerGrid[x][y] == 2) { // промах
-                    cell.setTexture(miss);
-                }
-                else if (computerGrid[x][y] == 3) { // попадание
-                    cell.setTexture(explosion);
-                }
-                else if (computerGrid[x][y] == 4
-                    && computerGrid[x + 1][y] != 1
-                    && computerGrid[x - 1][y] != 1
-                    && computerGrid[x][y + 1] != 1
-                    && computerGrid[x][y - 1] != 1
-                    && computerGrid[x + 1][y] != 3
-                    && computerGrid[x - 1][y] != 3
-                    && computerGrid[x][y + 1] != 3
-                    && computerGrid[x][y - 1] != 3
-                    && computerGrid[x + 1][y] != 4
-                    && computerGrid[x - 1][y] != 4
-                    && computerGrid[x][y + 1] != 4
-                    && computerGrid[x][y - 1] != 4) { // палуба корабля
-                    cell.setTexture(ship1exp);
-                }
-                else if (computerGrid[x][y] == 4
-                    && (computerGrid[x + 1][y] == 1
-                        || computerGrid[x + 1][y] == 3
-                        || computerGrid[x + 1][y] == 4)
-                    && computerGrid[x - 1][y] != 1
-                    && computerGrid[x][y + 1] != 1
-                    && computerGrid[x][y - 1] != 1
-                    && computerGrid[x - 1][y] != 3
-                    && computerGrid[x][y + 1] != 3
-                    && computerGrid[x][y - 1] != 3
-                    && computerGrid[x - 1][y] != 4
-                    && computerGrid[x][y + 1] != 4
-                    && computerGrid[x][y - 1] != 4) { // палуба корабля
-                    cell.setTexture(shipedgerexp);
-                }
-                else if (computerGrid[x][y] == 4
-                    && (computerGrid[x - 1][y] == 1
-                        || computerGrid[x - 1][y] == 3
-                        || computerGrid[x - 1][y] == 4)
-                    && computerGrid[x + 1][y] != 1
-                    && computerGrid[x][y + 1] != 1
-                    && computerGrid[x][y - 1] != 1
-                    && computerGrid[x + 1][y] != 3
-                    && computerGrid[x][y + 1] != 3
-                    && computerGrid[x][y - 1] != 3
-                    && computerGrid[x + 1][y] != 4
-                    && computerGrid[x][y + 1] != 4
-                    && computerGrid[x][y - 1] != 4) { // палуба корабля
-                    cell.setTexture(shipedgelexp);
-                }
-                else if (computerGrid[x][y] == 4
-                    && (computerGrid[x][y - 1] == 1
-                        || computerGrid[x][y - 1] == 3
-                        || computerGrid[x][y - 1] == 4)
-                    && computerGrid[x - 1][y] != 1
-                    && computerGrid[x][y + 1] != 1
-                    && computerGrid[x + 1][y] != 1
-                    && computerGrid[x - 1][y] != 3
-                    && computerGrid[x][y + 1] != 3
-                    && computerGrid[x + 1][y] != 3
-                    && computerGrid[x - 1][y] != 4
-                    && computerGrid[x][y + 1] != 4
-                    && computerGrid[x + 1][y] != 4) { // палуба корабля
-                    cell.setTexture(shipedgetexp);
-                }
-                else if (computerGrid[x][y] == 4
-                    && (computerGrid[x][y + 1] == 1
-                        || computerGrid[x][y + 1] == 3
-                        || computerGrid[x][y + 1] == 4)
-                    && computerGrid[x - 1][y] != 1
-                    && computerGrid[x + 1][y] != 1
-                    && computerGrid[x][y - 1] != 1
-                    && computerGrid[x - 1][y] != 3
-                    && computerGrid[x + 1][y] != 3
-                    && computerGrid[x][y - 1] != 3
-                    && computerGrid[x - 1][y] != 4
-                    && computerGrid[x + 1][y] != 4
-                    && computerGrid[x][y - 1] != 4) { // палуба корабля
-                    cell.setTexture(shipedgedexp);
-                }
-                else if (computerGrid[x][y] == 4
-                    && computerGrid[x][y + 1] != 1
-                    && computerGrid[x][y - 1] != 1
-                    && computerGrid[x][y + 1] != 3
-                    && computerGrid[x][y - 1] != 3
-                    && computerGrid[x][y + 1] != 4
-                    && computerGrid[x][y - 1] != 4
-                    && ((computerGrid[x + 1][y] == 1
-                        && computerGrid[x - 1][y] == 1)
-                        || (computerGrid[x + 1][y] == 3
-                            && computerGrid[x - 1][y] == 3)
-                        || (computerGrid[x + 1][y] == 1
-                            && computerGrid[x - 1][y] == 3)
-                        || (computerGrid[x + 1][y] == 3
-                            && computerGrid[x - 1][y] == 1)
-                        || (computerGrid[x + 1][y] == 4
-                            && computerGrid[x - 1][y] == 4))) { // палуба корабля
-                    cell.setTexture(shipmidlrexp);
-                }
-                else if (computerGrid[x][y] == 4
-                    && computerGrid[x + 1][y] != 1
-                    && computerGrid[x - 1][y] != 1
-                    && computerGrid[x + 1][y] != 3
-                    && computerGrid[x - 1][y] != 3
-                    && computerGrid[x + 1][y] != 4
-                    && computerGrid[x - 1][y] != 4
-                    && ((computerGrid[x][y + 1] == 1
-                        && computerGrid[x][y - 1] == 1)
-                        || (computerGrid[x][y + 1] == 3
-                            && computerGrid[x][y - 1] == 3)
-                        || (computerGrid[x][y + 1] == 1
-                            && computerGrid[x][y - 1] == 3)
-                        || (computerGrid[x][y + 1] == 3
-                            && computerGrid[x][y - 1] == 1)
-                        || (computerGrid[x][y + 1] == 4
-                            && computerGrid[x][y - 1] == 4))) { // палуба корабля
-                    cell.setTexture(shipmidtdexp);
-                }
-                else if (computerGrid[x][y] == -1) {
-                    cell.setTexture(sand);
-                }
-                window.draw(cell);
-            }
-        }
-    }
-
-    for (int x = 0; x < size + 2; x++) {
-        for (int y = 0; y < size + 2; y++) {
-            cell.setPosition(x * cellSize, y * cellSize);
-            if (playerGrid[x][y] == 0) { // неоткрытая ячейка
-                cell.setTexture(sea);
-            }
-            else if (playerGrid[x][y] == 1 
-                && playerGrid[x + 1][y] != 1 
-                && playerGrid[x - 1][y] != 1 
-                && playerGrid[x][y + 1] != 1 
-                && playerGrid[x][y - 1] != 1
-                && playerGrid[x + 1][y] != 3
-                && playerGrid[x - 1][y] != 3
-                && playerGrid[x][y + 1] != 3
-                && playerGrid[x][y - 1] != 3
-                && playerGrid[x + 1][y] != 4
-                && playerGrid[x - 1][y] != 4
-                && playerGrid[x][y + 1] != 4
-                && playerGrid[x][y - 1] != 4) { // палуба корабля
-                cell.setTexture(ship1);
-            }
-            else if (playerGrid[x][y] == 4
-                && playerGrid[x + 1][y] != 1
-                && playerGrid[x - 1][y] != 1
-                && playerGrid[x][y + 1] != 1
-                && playerGrid[x][y - 1] != 1
-                && playerGrid[x + 1][y] != 3
-                && playerGrid[x - 1][y] != 3
-                && playerGrid[x][y + 1] != 3
-                && playerGrid[x][y - 1] != 3
-                && playerGrid[x + 1][y] != 4
-                && playerGrid[x - 1][y] != 4
-                && playerGrid[x][y + 1] != 4
-                && playerGrid[x][y - 1] != 4) { // палуба корабля
-                cell.setTexture(ship1exp);
-            }
-            else if (playerGrid[x][y] == 1 
-                && (playerGrid[x + 1][y] == 1
-                    || playerGrid[x + 1][y] == 3)
-                && playerGrid[x - 1][y] != 1 
-                && playerGrid[x][y + 1] != 1 
-                && playerGrid[x][y - 1] != 1 
-                && playerGrid[x - 1][y] != 3 
-                && playerGrid[x][y + 1] != 3 
-                && playerGrid[x][y - 1] != 3
-                && playerGrid[x - 1][y] != 4
-                && playerGrid[x][y + 1] != 4
-                && playerGrid[x][y - 1] != 4) { // палуба корабля
-                cell.setTexture(shipedger);
-            }
-            else if (playerGrid[x][y] == 1
-                && (playerGrid[x - 1][y] == 1
-                    || playerGrid[x - 1][y] == 3)
-                && playerGrid[x + 1][y] != 1
-                && playerGrid[x][y + 1] != 1
-                && playerGrid[x][y - 1] != 1
-                && playerGrid[x + 1][y] != 3
-                && playerGrid[x][y + 1] != 3
-                && playerGrid[x][y - 1] != 3
-                && playerGrid[x + 1][y] != 4
-                && playerGrid[x][y + 1] != 4
-                && playerGrid[x][y - 1] != 4) { // палуба корабля
-                cell.setTexture(shipedgel);
-            }
-            else if (playerGrid[x][y] == 1
-                && (playerGrid[x][y - 1] == 1
-                    || playerGrid[x][y - 1] == 3)
-                && playerGrid[x - 1][y] != 1
-                && playerGrid[x][y + 1] != 1
-                && playerGrid[x + 1][y] != 1
-                && playerGrid[x - 1][y] != 3
-                && playerGrid[x][y + 1] != 3
-                && playerGrid[x + 1][y] != 3
-                && playerGrid[x - 1][y] != 4
-                && playerGrid[x][y + 1] != 4
-                && playerGrid[x + 1][y] != 4) { // палуба корабля
-                cell.setTexture(shipedget);
-            }
-            else if (playerGrid[x][y] == 1
-                && (playerGrid[x][y + 1] == 1
-                    || playerGrid[x][y + 1] == 3)
-                && playerGrid[x - 1][y] != 1
-                && playerGrid[x + 1][y] != 1
-                && playerGrid[x][y - 1] != 1
-                && playerGrid[x - 1][y] != 3
-                && playerGrid[x + 1][y] != 3
-                && playerGrid[x][y - 1] != 3
-                && playerGrid[x - 1][y] != 4
-                && playerGrid[x + 1][y] != 4
-                && playerGrid[x][y - 1] != 4) { // палуба корабля
-                cell.setTexture(shipedged);
-            }
-
-            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
-                && (playerGrid[x + 1][y] == 1
-                    || playerGrid[x + 1][y] == 3
-                    || playerGrid[x + 1][y] == 4)
-                && playerGrid[x - 1][y] != 1
-                && playerGrid[x][y + 1] != 1
-                && playerGrid[x][y - 1] != 1
-                && playerGrid[x - 1][y] != 3
-                && playerGrid[x][y + 1] != 3
-                && playerGrid[x][y - 1] != 3
-                && playerGrid[x - 1][y] != 4
-                && playerGrid[x][y + 1] != 4
-                && playerGrid[x][y - 1] != 4) { // палуба корабля
-                cell.setTexture(shipedgerexp);
-            }
-            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
-                && (playerGrid[x - 1][y] == 1
-                    || playerGrid[x - 1][y] == 3
-                    || playerGrid[x - 1][y] == 4)
-                && playerGrid[x + 1][y] != 1
-                && playerGrid[x][y + 1] != 1
-                && playerGrid[x][y - 1] != 1
-                && playerGrid[x + 1][y] != 3
-                && playerGrid[x][y + 1] != 3
-                && playerGrid[x][y - 1] != 3
-                && playerGrid[x + 1][y] != 4
-                && playerGrid[x][y + 1] != 4
-                && playerGrid[x][y - 1] != 4) { // палуба корабля
-                cell.setTexture(shipedgelexp);
-            }
-            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
-                && (playerGrid[x][y - 1] == 1
-                    || playerGrid[x][y - 1] == 3
-                    || playerGrid[x][y - 1] == 4)
-                && playerGrid[x - 1][y] != 1
-                && playerGrid[x][y + 1] != 1
-                && playerGrid[x + 1][y] != 1
-                && playerGrid[x - 1][y] != 3
-                && playerGrid[x][y + 1] != 3
-                && playerGrid[x + 1][y] != 3
-                && playerGrid[x - 1][y] != 4
-                && playerGrid[x][y + 1] != 4
-                && playerGrid[x + 1][y] != 4) { // палуба корабля
-                cell.setTexture(shipedgetexp);
-            }
-            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
-                && (playerGrid[x][y + 1] == 1
-                    || playerGrid[x][y + 1] == 3
-                    || playerGrid[x][y + 1] == 4)
-                && playerGrid[x - 1][y] != 1
-                && playerGrid[x + 1][y] != 1
-                && playerGrid[x][y - 1] != 1
-                && playerGrid[x - 1][y] != 3
-                && playerGrid[x + 1][y] != 3
-                && playerGrid[x][y - 1] != 3
-                && playerGrid[x - 1][y] != 4
-                && playerGrid[x + 1][y] != 4
-                && playerGrid[x][y - 1] != 4) { // палуба корабля
-                cell.setTexture(shipedgedexp);
-            }
-
-            else if (playerGrid[x][y] == 1 
-                && playerGrid[x][y + 1] != 1
-                && playerGrid[x][y - 1] != 1
-                && playerGrid[x][y + 1] != 3
-                && playerGrid[x][y - 1] != 3
-                && playerGrid[x][y + 1] != 4
-                && playerGrid[x][y - 1] != 4
-                && ((playerGrid[x + 1][y] == 1
-                && playerGrid[x - 1][y] == 1)
-                || (playerGrid[x + 1][y] == 3
-                && playerGrid[x - 1][y] == 3)
-                || (playerGrid[x + 1][y] == 1
-                && playerGrid[x - 1][y] == 3)
-                || (playerGrid[x + 1][y] == 3
-                && playerGrid[x - 1][y] == 1))) { // палуба корабля
-                cell.setTexture(shipmidlr);
-            }
-            else if (playerGrid[x][y] == 1 
-                && playerGrid[x + 1][y] != 1
-                && playerGrid[x - 1][y] != 1
-                && playerGrid[x + 1][y] != 3
-                && playerGrid[x - 1][y] != 3
-                && playerGrid[x + 1][y] != 4
-                && playerGrid[x - 1][y] != 4
-                && ((playerGrid[x][y + 1] == 1
-                && playerGrid[x][y - 1] == 1)
-                || (playerGrid[x][y + 1] == 3
-                && playerGrid[x][y - 1] == 3)
-                || (playerGrid[x][y + 1] == 1
-                && playerGrid[x][y - 1] == 3)
-                || (playerGrid[x][y + 1] == 3
-                && playerGrid[x][y - 1] == 1))) { // палуба корабля
-                cell.setTexture(shipmidtd);
-            }
-
-            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
-                && playerGrid[x][y + 1] != 1
-                && playerGrid[x][y - 1] != 1
-                && playerGrid[x][y + 1] != 3
-                && playerGrid[x][y - 1] != 3
-                && playerGrid[x][y + 1] != 4
-                && playerGrid[x][y - 1] != 4
-                && ((playerGrid[x + 1][y] == 1
-                && playerGrid[x - 1][y] == 1)
-                || (playerGrid[x + 1][y] == 3
-                && playerGrid[x - 1][y] == 3)
-                || (playerGrid[x + 1][y] == 1
-                && playerGrid[x - 1][y] == 3)
-                || (playerGrid[x + 1][y] == 3
-                && playerGrid[x - 1][y] == 1)
-                || (playerGrid[x + 1][y] == 4
-                && playerGrid[x - 1][y] == 4))) { // палуба корабля
-                    cell.setTexture(shipmidlrexp);
-                    }
-            else if ((playerGrid[x][y] == 3 || playerGrid[x][y] == 4)
-                && playerGrid[x + 1][y] != 1
-                && playerGrid[x - 1][y] != 1
-                && playerGrid[x + 1][y] != 3
-                && playerGrid[x - 1][y] != 3
-                && playerGrid[x + 1][y] != 4
-                && playerGrid[x - 1][y] != 4
-                && ((playerGrid[x][y + 1] == 1
-                && playerGrid[x][y - 1] == 1)
-                || (playerGrid[x][y + 1] == 3
-                && playerGrid[x][y - 1] == 3)
-                || (playerGrid[x][y + 1] == 1
-                && playerGrid[x][y - 1] == 3)
-                || (playerGrid[x][y + 1] == 3
-                && playerGrid[x][y - 1] == 1)
-                || (playerGrid[x][y + 1] == 4
-                && playerGrid[x][y - 1] == 4))) { // палуба корабля
-                    cell.setTexture(shipmidtdexp);
-                    }
-
-            else if (playerGrid[x][y] == 2) { // промах
-                cell.setTexture(miss);
-            }
-            else if (playerGrid[x][y] == -1) { // попадание
-                cell.setTexture(sand);
-            }
-            window.draw(cell);
-        }
-    }
-}
-
-void timer() {
-    clock_t start_time = clock(); // Получение текущего времени
-    while (clock() < start_time + 2 * CLOCKS_PER_SEC) {} // Ожидание 2 секунд
-}
-
-void init() {
+int init() {
     if (!sea.loadFromFile("../resources/textures/sea.jpg")
         || !sand.loadFromFile("../resources/textures/sand.jpg")
         || !miss.loadFromFile("../resources/textures/miss.jpg")
@@ -874,72 +56,407 @@ void init() {
         || !shipmidtdexp.loadFromFile("../resources/textures/shipmid(td)exp.jpg")
         || !explosion.loadFromFile("../resources/textures/explosion.jpg")
         || !buffer.loadFromFile("../resources/sfx/shoot.wav")) {
-        std::cout << "Error";
+        return 1;
     }
     shoot.setBuffer(buffer);
+    return 0;
 }
 
-void zeroGrid() {
-    for (int x = 1; x < size + 1; x++) {
-        for (int y = 1; y < size + 1; y++) {
-            playerGrid[x][y] = 0;
-            computerGrid[x][y] = 0;
+void drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[size + 2][size + 2], bool isPlayerGrid) {
+    Sprite cell;
+    cell.setPosition(sf::Vector2f(cellSize, cellSize));
+
+    float x_offset = 0.f;
+    if (!isPlayerGrid) {
+        x_offset = (size + 2) * cellSize;
+        for (int x = 0; x < size + 2; x++) {
+            for (int y = 0; y < size + 2; y++) {
+                cell.setPosition(x * cellSize + x_offset, y * cellSize);
+                if (Gridc[x][y] == 0 || Gridc[x][y] == 1) { // неоткрытая ячейка или корабль компьютера
+                    cell.setTexture(sea);
+                }
+                else if (Gridc[x][y] == 2) { // промах
+                    cell.setTexture(miss);
+                }
+                else if (Gridc[x][y] == 3) { // попадание
+                    cell.setTexture(explosion);
+                }
+                else if (Gridc[x][y] == 4
+                    && Gridc[x + 1][y] != 1
+                    && Gridc[x - 1][y] != 1
+                    && Gridc[x][y + 1] != 1
+                    && Gridc[x][y - 1] != 1
+                    && Gridc[x + 1][y] != 3
+                    && Gridc[x - 1][y] != 3
+                    && Gridc[x][y + 1] != 3
+                    && Gridc[x][y - 1] != 3
+                    && Gridc[x + 1][y] != 4
+                    && Gridc[x - 1][y] != 4
+                    && Gridc[x][y + 1] != 4
+                    && Gridc[x][y - 1] != 4) { // палуба корабля
+                    cell.setTexture(ship1exp);
+                }
+                else if (Gridc[x][y] == 4
+                    && (Gridc[x + 1][y] == 1
+                        || Gridc[x + 1][y] == 3
+                        || Gridc[x + 1][y] == 4)
+                    && Gridc[x - 1][y] != 1
+                    && Gridc[x][y + 1] != 1
+                    && Gridc[x][y - 1] != 1
+                    && Gridc[x - 1][y] != 3
+                    && Gridc[x][y + 1] != 3
+                    && Gridc[x][y - 1] != 3
+                    && Gridc[x - 1][y] != 4
+                    && Gridc[x][y + 1] != 4
+                    && Gridc[x][y - 1] != 4) { // палуба корабля
+                    cell.setTexture(shipedgerexp);
+                }
+                else if (Gridc[x][y] == 4
+                    && (Gridc[x - 1][y] == 1
+                        || Gridc[x - 1][y] == 3
+                        || Gridc[x - 1][y] == 4)
+                    && Gridc[x + 1][y] != 1
+                    && Gridc[x][y + 1] != 1
+                    && Gridc[x][y - 1] != 1
+                    && Gridc[x + 1][y] != 3
+                    && Gridc[x][y + 1] != 3
+                    && Gridc[x][y - 1] != 3
+                    && Gridc[x + 1][y] != 4
+                    && Gridc[x][y + 1] != 4
+                    && Gridc[x][y - 1] != 4) { // палуба корабля
+                    cell.setTexture(shipedgelexp);
+                }
+                else if (Gridc[x][y] == 4
+                    && (Gridc[x][y - 1] == 1
+                        || Gridc[x][y - 1] == 3
+                        || Gridc[x][y - 1] == 4)
+                    && Gridc[x - 1][y] != 1
+                    && Gridc[x][y + 1] != 1
+                    && Gridc[x + 1][y] != 1
+                    && Gridc[x - 1][y] != 3
+                    && Gridc[x][y + 1] != 3
+                    && Gridc[x + 1][y] != 3
+                    && Gridc[x - 1][y] != 4
+                    && Gridc[x][y + 1] != 4
+                    && Gridc[x + 1][y] != 4) { // палуба корабля
+                    cell.setTexture(shipedgetexp);
+                }
+                else if (Gridc[x][y] == 4
+                    && (Gridc[x][y + 1] == 1
+                        || Gridc[x][y + 1] == 3
+                        || Gridc[x][y + 1] == 4)
+                    && Gridc[x - 1][y] != 1
+                    && Gridc[x + 1][y] != 1
+                    && Gridc[x][y - 1] != 1
+                    && Gridc[x - 1][y] != 3
+                    && Gridc[x + 1][y] != 3
+                    && Gridc[x][y - 1] != 3
+                    && Gridc[x - 1][y] != 4
+                    && Gridc[x + 1][y] != 4
+                    && Gridc[x][y - 1] != 4) { // палуба корабля
+                    cell.setTexture(shipedgedexp);
+                }
+                else if (Gridc[x][y] == 4
+                    && Gridc[x][y + 1] != 1
+                    && Gridc[x][y - 1] != 1
+                    && Gridc[x][y + 1] != 3
+                    && Gridc[x][y - 1] != 3
+                    && Gridc[x][y + 1] != 4
+                    && Gridc[x][y - 1] != 4
+                    && ((Gridc[x + 1][y] == 1
+                        && Gridc[x - 1][y] == 1)
+                        || (Gridc[x + 1][y] == 3
+                            && Gridc[x - 1][y] == 3)
+                        || (Gridc[x + 1][y] == 1
+                            && Gridc[x - 1][y] == 3)
+                        || (Gridc[x + 1][y] == 3
+                            && Gridc[x - 1][y] == 1)
+                        || (Gridc[x + 1][y] == 4
+                            && Gridc[x - 1][y] == 4))) { // палуба корабля
+                    cell.setTexture(shipmidlrexp);
+                }
+                else if (Gridc[x][y] == 4
+                    && Gridc[x + 1][y] != 1
+                    && Gridc[x - 1][y] != 1
+                    && Gridc[x + 1][y] != 3
+                    && Gridc[x - 1][y] != 3
+                    && Gridc[x + 1][y] != 4
+                    && Gridc[x - 1][y] != 4
+                    && ((Gridc[x][y + 1] == 1
+                        && Gridc[x][y - 1] == 1)
+                        || (Gridc[x][y + 1] == 3
+                            && Gridc[x][y - 1] == 3)
+                        || (Gridc[x][y + 1] == 1
+                            && Gridc[x][y - 1] == 3)
+                        || (Gridc[x][y + 1] == 3
+                            && Gridc[x][y - 1] == 1)
+                        || (Gridc[x][y + 1] == 4
+                            && Gridc[x][y - 1] == 4))) { // палуба корабля
+                    cell.setTexture(shipmidtdexp);
+                }
+                else if (Gridc[x][y] == -1) {
+                    cell.setTexture(sand);
+                }
+                window.draw(cell);
+            }
         }
     }
-    for (int x = 0; x < size + 2; x++) {
-        playerGrid[x][0] = -1;
-        computerGrid[x][0] = -1;
-        playerGrid[x][size + 1] = -1;
-        computerGrid[x][size + 1] = -1;
-    }
-    for (int y = 0; y < size + 2; y++) {
-        playerGrid[0][y] = -1;
-        computerGrid[0][y] = -1;
-        playerGrid[size + 1][y] = -1;
-        computerGrid[size + 1][y] = -1;
-    }
-}
 
-void aroundHit(int Grid[size + 2][size + 2], int x, int y) {
-    Grid[x][y] = 4;
-    if (Grid[x + 1][y] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && y >= 1 && y < size + 1) {
-        Grid[x + 1][y] = 2;
-    }
-    if (Grid[x - 1][y] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && y >= 1 && y < size + 1) {
-        Grid[x - 1][y] = 2;
-    }
-    if (Grid[x][y + 1] == 0 && x >= 1 && x < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
-        Grid[x][y + 1] = 2;
-    }
-    if (Grid[x][y - 1] == 0 && x >= 1 && x < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
-        Grid[x][y - 1] = 2;
-    }
-    if (Grid[x + 1][y + 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
-        Grid[x + 1][y + 1] = 2;
-    }
-    if (Grid[x - 1][y - 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
-        Grid[x - 1][y - 1] = 2;
-    }
-    if (Grid[x - 1][y + 1] == 0 && (x - 1) >= 1 && (x - 1) < size + 1 && (y + 1) >= 1 && (y + 1) < size + 1) {
-        Grid[x - 1][y + 1] = 2;
-    }
-    if (Grid[x + 1][y - 1] == 0 && (x + 1) >= 1 && (x + 1) < size + 1 && (y - 1) >= 1 && (y - 1) < size + 1) {
-        Grid[x + 1][y - 1] = 2;
+    for (int x = 0; x < size + 2; x++) {
+        for (int y = 0; y < size + 2; y++) {
+            cell.setPosition(x * cellSize, y * cellSize);
+            if (Gridp[x][y] == 0) { // неоткрытая ячейка
+                cell.setTexture(sea);
+            }
+            else if (Gridp[x][y] == 1
+                && Gridp[x + 1][y] != 1
+                && Gridp[x - 1][y] != 1
+                && Gridp[x][y + 1] != 1
+                && Gridp[x][y - 1] != 1
+                && Gridp[x + 1][y] != 3
+                && Gridp[x - 1][y] != 3
+                && Gridp[x][y + 1] != 3
+                && Gridp[x][y - 1] != 3
+                && Gridp[x + 1][y] != 4
+                && Gridp[x - 1][y] != 4
+                && Gridp[x][y + 1] != 4
+                && Gridp[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(ship1);
+            }
+            else if (Gridp[x][y] == 4
+                && Gridp[x + 1][y] != 1
+                && Gridp[x - 1][y] != 1
+                && Gridp[x][y + 1] != 1
+                && Gridp[x][y - 1] != 1
+                && Gridp[x + 1][y] != 3
+                && Gridp[x - 1][y] != 3
+                && Gridp[x][y + 1] != 3
+                && Gridp[x][y - 1] != 3
+                && Gridp[x + 1][y] != 4
+                && Gridp[x - 1][y] != 4
+                && Gridp[x][y + 1] != 4
+                && Gridp[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(ship1exp);
+            }
+            else if (Gridp[x][y] == 1
+                && (Gridp[x + 1][y] == 1
+                    || Gridp[x + 1][y] == 3)
+                && Gridp[x - 1][y] != 1
+                && Gridp[x][y + 1] != 1
+                && Gridp[x][y - 1] != 1
+                && Gridp[x - 1][y] != 3
+                && Gridp[x][y + 1] != 3
+                && Gridp[x][y - 1] != 3
+                && Gridp[x - 1][y] != 4
+                && Gridp[x][y + 1] != 4
+                && Gridp[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedger);
+            }
+            else if (Gridp[x][y] == 1
+                && (Gridp[x - 1][y] == 1
+                    || Gridp[x - 1][y] == 3)
+                && Gridp[x + 1][y] != 1
+                && Gridp[x][y + 1] != 1
+                && Gridp[x][y - 1] != 1
+                && Gridp[x + 1][y] != 3
+                && Gridp[x][y + 1] != 3
+                && Gridp[x][y - 1] != 3
+                && Gridp[x + 1][y] != 4
+                && Gridp[x][y + 1] != 4
+                && Gridp[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedgel);
+            }
+            else if (Gridp[x][y] == 1
+                && (Gridp[x][y - 1] == 1
+                    || Gridp[x][y - 1] == 3)
+                && Gridp[x - 1][y] != 1
+                && Gridp[x][y + 1] != 1
+                && Gridp[x + 1][y] != 1
+                && Gridp[x - 1][y] != 3
+                && Gridp[x][y + 1] != 3
+                && Gridp[x + 1][y] != 3
+                && Gridp[x - 1][y] != 4
+                && Gridp[x][y + 1] != 4
+                && Gridp[x + 1][y] != 4) { // палуба корабля
+                cell.setTexture(shipedget);
+            }
+            else if (Gridp[x][y] == 1
+                && (Gridp[x][y + 1] == 1
+                    || Gridp[x][y + 1] == 3)
+                && Gridp[x - 1][y] != 1
+                && Gridp[x + 1][y] != 1
+                && Gridp[x][y - 1] != 1
+                && Gridp[x - 1][y] != 3
+                && Gridp[x + 1][y] != 3
+                && Gridp[x][y - 1] != 3
+                && Gridp[x - 1][y] != 4
+                && Gridp[x + 1][y] != 4
+                && Gridp[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedged);
+            }
+
+            else if ((Gridp[x][y] == 3 || Gridp[x][y] == 4)
+                && (Gridp[x + 1][y] == 1
+                    || Gridp[x + 1][y] == 3
+                    || Gridp[x + 1][y] == 4)
+                && Gridp[x - 1][y] != 1
+                && Gridp[x][y + 1] != 1
+                && Gridp[x][y - 1] != 1
+                && Gridp[x - 1][y] != 3
+                && Gridp[x][y + 1] != 3
+                && Gridp[x][y - 1] != 3
+                && Gridp[x - 1][y] != 4
+                && Gridp[x][y + 1] != 4
+                && Gridp[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedgerexp);
+            }
+            else if ((Gridp[x][y] == 3 || Gridp[x][y] == 4)
+                && (Gridp[x - 1][y] == 1
+                    || Gridp[x - 1][y] == 3
+                    || Gridp[x - 1][y] == 4)
+                && Gridp[x + 1][y] != 1
+                && Gridp[x][y + 1] != 1
+                && Gridp[x][y - 1] != 1
+                && Gridp[x + 1][y] != 3
+                && Gridp[x][y + 1] != 3
+                && Gridp[x][y - 1] != 3
+                && Gridp[x + 1][y] != 4
+                && Gridp[x][y + 1] != 4
+                && Gridp[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedgelexp);
+            }
+            else if ((Gridp[x][y] == 3 || Gridp[x][y] == 4)
+                && (Gridp[x][y - 1] == 1
+                    || Gridp[x][y - 1] == 3
+                    || Gridp[x][y - 1] == 4)
+                && Gridp[x - 1][y] != 1
+                && Gridp[x][y + 1] != 1
+                && Gridp[x + 1][y] != 1
+                && Gridp[x - 1][y] != 3
+                && Gridp[x][y + 1] != 3
+                && Gridp[x + 1][y] != 3
+                && Gridp[x - 1][y] != 4
+                && Gridp[x][y + 1] != 4
+                && Gridp[x + 1][y] != 4) { // палуба корабля
+                cell.setTexture(shipedgetexp);
+            }
+            else if ((Gridp[x][y] == 3 || Gridp[x][y] == 4)
+                && (Gridp[x][y + 1] == 1
+                    || Gridp[x][y + 1] == 3
+                    || Gridp[x][y + 1] == 4)
+                && Gridp[x - 1][y] != 1
+                && Gridp[x + 1][y] != 1
+                && Gridp[x][y - 1] != 1
+                && Gridp[x - 1][y] != 3
+                && Gridp[x + 1][y] != 3
+                && Gridp[x][y - 1] != 3
+                && Gridp[x - 1][y] != 4
+                && Gridp[x + 1][y] != 4
+                && Gridp[x][y - 1] != 4) { // палуба корабля
+                cell.setTexture(shipedgedexp);
+            }
+
+            else if (Gridp[x][y] == 1
+                && Gridp[x][y + 1] != 1
+                && Gridp[x][y - 1] != 1
+                && Gridp[x][y + 1] != 3
+                && Gridp[x][y - 1] != 3
+                && Gridp[x][y + 1] != 4
+                && Gridp[x][y - 1] != 4
+                && ((Gridp[x + 1][y] == 1
+                    && Gridp[x - 1][y] == 1)
+                    || (Gridp[x + 1][y] == 3
+                        && Gridp[x - 1][y] == 3)
+                    || (Gridp[x + 1][y] == 1
+                        && Gridp[x - 1][y] == 3)
+                    || (Gridp[x + 1][y] == 3
+                        && Gridp[x - 1][y] == 1))) { // палуба корабля
+                cell.setTexture(shipmidlr);
+            }
+            else if (Gridp[x][y] == 1
+                && Gridp[x + 1][y] != 1
+                && Gridp[x - 1][y] != 1
+                && Gridp[x + 1][y] != 3
+                && Gridp[x - 1][y] != 3
+                && Gridp[x + 1][y] != 4
+                && Gridp[x - 1][y] != 4
+                && ((Gridp[x][y + 1] == 1
+                    && Gridp[x][y - 1] == 1)
+                    || (Gridp[x][y + 1] == 3
+                        && Gridp[x][y - 1] == 3)
+                    || (Gridp[x][y + 1] == 1
+                        && Gridp[x][y - 1] == 3)
+                    || (Gridp[x][y + 1] == 3
+                        && Gridp[x][y - 1] == 1))) { // палуба корабля
+                cell.setTexture(shipmidtd);
+            }
+
+            else if ((Gridp[x][y] == 3 || Gridp[x][y] == 4)
+                && Gridp[x][y + 1] != 1
+                && Gridp[x][y - 1] != 1
+                && Gridp[x][y + 1] != 3
+                && Gridp[x][y - 1] != 3
+                && Gridp[x][y + 1] != 4
+                && Gridp[x][y - 1] != 4
+                && ((Gridp[x + 1][y] == 1
+                    && Gridp[x - 1][y] == 1)
+                    || (Gridp[x + 1][y] == 3
+                        && Gridp[x - 1][y] == 3)
+                    || (Gridp[x + 1][y] == 1
+                        && Gridp[x - 1][y] == 3)
+                    || (Gridp[x + 1][y] == 3
+                        && Gridp[x - 1][y] == 1)
+                    || (Gridp[x + 1][y] == 4
+                        && Gridp[x - 1][y] == 4))) { // палуба корабля
+                cell.setTexture(shipmidlrexp);
+            }
+            else if ((Gridp[x][y] == 3 || Gridp[x][y] == 4)
+                && Gridp[x + 1][y] != 1
+                && Gridp[x - 1][y] != 1
+                && Gridp[x + 1][y] != 3
+                && Gridp[x - 1][y] != 3
+                && Gridp[x + 1][y] != 4
+                && Gridp[x - 1][y] != 4
+                && ((Gridp[x][y + 1] == 1
+                    && Gridp[x][y - 1] == 1)
+                    || (Gridp[x][y + 1] == 3
+                        && Gridp[x][y - 1] == 3)
+                    || (Gridp[x][y + 1] == 1
+                        && Gridp[x][y - 1] == 3)
+                    || (Gridp[x][y + 1] == 3
+                        && Gridp[x][y - 1] == 1)
+                    || (Gridp[x][y + 1] == 4
+                        && Gridp[x][y - 1] == 4))) { // палуба корабля
+                cell.setTexture(shipmidtdexp);
+            }
+
+            else if (Gridp[x][y] == 2) { // промах
+                cell.setTexture(miss);
+            }
+            else if (Gridp[x][y] == -1) { // попадание
+                cell.setTexture(sand);
+            }
+            window.draw(cell);
+        }
     }
 }
 
 int main() {
+
+    int playerGrid[size + 2][size + 2]; // игровое поле игрока
+    int computerGrid[size + 2][size + 2]; // игровое поле компьютера
+
     RenderWindow window(VideoMode((size+2) * cellSize * 2, (size + 2) * cellSize), "Battleships", Style::Titlebar | Style::Close);
     window.setFramerateLimit(60);
 
     srand(time(NULL));
 
-    zeroGrid();
+    zeroGrid(playerGrid, computerGrid);
 
     init();
 
-    Ship_placement(computerGrid);
-    Ship_placement(playerGrid);
+    Ship_placement(computerGrid, size);
+    Ship_placement(playerGrid, size);
 
     while (window.isOpen()) {
         Event event;
@@ -981,8 +498,8 @@ int main() {
                 }
             }
         }
-        drawGrid(window, playerGrid, true); // рисуем поле игрока
-        drawGrid(window, computerGrid, false); // рисуем поле компьютера
+        drawGrid(window, playerGrid, computerGrid, true); // рисуем поле игрока
+        drawGrid(window, playerGrid, computerGrid, false); // рисуем поле компьютера
         window.display();
         if (isPaused == 1) {
             timer();
