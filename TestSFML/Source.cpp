@@ -37,7 +37,7 @@ Sound shoot;
 SoundBuffer buffer;
 
 int init() {
-    if (!sea.loadFromFile("../resources/textures/sea.jpg")
+    if (!sea.loadFromFile("../resources/textures/sea.jpg") 
         || !sand.loadFromFile("../resources/textures/sand.jpg")
         || !miss.loadFromFile("../resources/textures/miss.jpg")
         || !ship1.loadFromFile("../resources/textures/ship1.jpg")
@@ -62,7 +62,7 @@ int init() {
     return 0;
 }
 
-void drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[size + 2][size + 2], bool isPlayerGrid) {
+int drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[size + 2][size + 2], bool isPlayerGrid) {
     Sprite cell;
     cell.setPosition(sf::Vector2f(cellSize, cellSize));
 
@@ -74,11 +74,20 @@ void drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[siz
                 cell.setPosition(x * cellSize + x_offset, y * cellSize);
                 if (Gridc[x][y] == 0 || Gridc[x][y] == 1) { // неоткрыта€ €чейка или корабль компьютера
                     cell.setTexture(sea);
+                    if (Gridc[x][y] != 0 && Gridc[x][y] != 1) {
+                        return 1;
+                    }
                 }
                 else if (Gridc[x][y] == 2) { // промах
+                    if (Gridc[x][y] != 2) {
+                        return 1;
+                    }
                     cell.setTexture(miss);
                 }
                 else if (Gridc[x][y] == 3) { // попадание
+                    if (Gridc[x][y] != 3) {
+                        return 1;
+                    }
                     cell.setTexture(explosion);
                 }
                 else if (Gridc[x][y] == 4
@@ -195,6 +204,9 @@ void drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[siz
                     cell.setTexture(shipmidtdexp);
                 }
                 else if (Gridc[x][y] == -1) {
+                    if (Gridc[x][y] != -1) {
+                        return 1;
+                    }
                     cell.setTexture(sand);
                 }
                 window.draw(cell);
@@ -206,6 +218,9 @@ void drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[siz
         for (int y = 0; y < size + 2; y++) {
             cell.setPosition(x * cellSize, y * cellSize);
             if (Gridp[x][y] == 0) { // неоткрыта€ €чейка
+                if (Gridp[x][y] != 0) {
+                    return 1;
+                }
                 cell.setTexture(sea);
             }
             else if (Gridp[x][y] == 1
@@ -429,16 +444,22 @@ void drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[siz
                         && Gridp[x][y - 1] == 4))) { // палуба корабл€
                 cell.setTexture(shipmidtdexp);
             }
-
             else if (Gridp[x][y] == 2) { // промах
+                if (Gridp[x][y] != 2) {
+                    return 1;
+                }
                 cell.setTexture(miss);
             }
             else if (Gridp[x][y] == -1) { // попадание
+                if (Gridp[x][y] != -1) {
+                    return 1;
+                }
                 cell.setTexture(sand);
             }
             window.draw(cell);
         }
     }
+    return 0;
 }
 
 int main() {
@@ -451,12 +472,17 @@ int main() {
 
     srand(time(NULL));
 
-    zeroGrid(playerGrid, computerGrid);
+    if (zeroGrid(playerGrid, computerGrid) != 0) {
+        return 1;
+    }
 
-    init();
+    if (init() != 0) {
+        return 1;
+    }
 
-    Ship_placement(computerGrid, size);
-    Ship_placement(playerGrid, size);
+    if (Ship_placement(computerGrid, size) != 0 || Ship_placement(playerGrid, size) != 0) {
+        return 1;
+    }
 
     while (window.isOpen()) {
         Event event;
@@ -488,23 +514,31 @@ int main() {
             for (int y = 1; y < size+1; y++) {
                 if (computerGrid[x][y] == 3) {
                     if (isSunk(x, y, computerGrid, size) == true) {
-                        aroundHit(computerGrid, x, y);
+                        if (aroundHit(computerGrid, x, y) != 0) {
+                            return 1;
+                        }
                     }
                 }
                 if (playerGrid[x][y] == 3) {
                     if (isSunk(x, y, playerGrid, size) == true) {
-                        aroundHit(playerGrid, x, y);
+                        if (aroundHit(playerGrid, x, y) != 0) {
+                            return 1;
+                        }
                     }
                 }
             }
         }
-        drawGrid(window, playerGrid, computerGrid, true); // рисуем поле игрока
-        drawGrid(window, playerGrid, computerGrid, false); // рисуем поле компьютера
+        if (drawGrid(window, playerGrid, computerGrid, true) != 0 || drawGrid(window, playerGrid, computerGrid, false) != 0) {
+            return 1;
+        }
         window.display();
         if (isPaused == 1) {
-            timer();
+            if (timer() != 0) {
+                return 1;
+            }
             isPaused = 0;
         }
+
         if (!isPlayerTurn) { // если сейчас ход компьютера
             
             bool flaggg = 0;
