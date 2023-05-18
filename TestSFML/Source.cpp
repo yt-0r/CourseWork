@@ -79,16 +79,16 @@ int drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[size
                     }
                 }
                 else if (Gridc[x][y] == 2) { // промах
+                    cell.setTexture(miss);
                     if (Gridc[x][y] != 2) {
                         return 1;
                     }
-                    cell.setTexture(miss);
                 }
                 else if (Gridc[x][y] == 3) { // попадание
+                    cell.setTexture(explosion);
                     if (Gridc[x][y] != 3) {
                         return 1;
                     }
-                    cell.setTexture(explosion);
                 }
                 else if (Gridc[x][y] == 4
                     && Gridc[x + 1][y] != 1
@@ -204,10 +204,10 @@ int drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[size
                     cell.setTexture(shipmidtdexp);
                 }
                 else if (Gridc[x][y] == -1) {
+                    cell.setTexture(sand);
                     if (Gridc[x][y] != -1) {
                         return 1;
                     }
-                    cell.setTexture(sand);
                 }
                 window.draw(cell);
             }
@@ -218,10 +218,10 @@ int drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[size
         for (int y = 0; y < size + 2; y++) {
             cell.setPosition(x * cellSize, y * cellSize);
             if (Gridp[x][y] == 0) { // неоткрыта€ €чейка
+                cell.setTexture(sea);
                 if (Gridp[x][y] != 0) {
                     return 1;
                 }
-                cell.setTexture(sea);
             }
             else if (Gridp[x][y] == 1
                 && Gridp[x + 1][y] != 1
@@ -445,16 +445,16 @@ int drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[size
                 cell.setTexture(shipmidtdexp);
             }
             else if (Gridp[x][y] == 2) { // промах
+                cell.setTexture(miss);
                 if (Gridp[x][y] != 2) {
                     return 1;
                 }
-                cell.setTexture(miss);
             }
             else if (Gridp[x][y] == -1) { // попадание
+                cell.setTexture(sand);
                 if (Gridp[x][y] != -1) {
                     return 1;
                 }
-                cell.setTexture(sand);
             }
             window.draw(cell);
         }
