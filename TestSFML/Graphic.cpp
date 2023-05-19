@@ -1,5 +1,4 @@
 #include "Graphic.h"
-#pragma warning(disable:6385)
 
 Texture sand;
 Texture sea;

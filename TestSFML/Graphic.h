@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:6385)
 #include <iostream>
 #include <cmath>
 #include <ctime>

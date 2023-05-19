@@ -1,5 +1,6 @@
 #include "Logic.h"
 #pragma warning(disable:6385)
+#pragma warning(disable:6386)
 
 int Ship_placement(int b[size + 2][size + 2], int size)
 {
