@@ -1,5 +1,5 @@
-#include "Header.h"
-
+#include "Logic.h"
+#pragma warning(disable:6385)
 
 int Ship_placement(int b[size + 2][size + 2], int size)
 {
@@ -460,93 +460,105 @@ int aroundHit(int Grid[size + 2][size + 2], int x, int y) {
 }
 
 bool isSunk(int x, int y, int Grid[size + 2][size + 2], int size) {
-    if (Grid[x + 1][y] != 1) {
-        if (Grid[x + 1][y] == 3 || Grid[x + 1][y] == 4) {
-            if (Grid[x + 2][y] != 1) {
-                if (Grid[x + 2][y] == 3 || Grid[x + 2][y] == 4) {
-                    if (Grid[x + 3][y] != 1) {
-                        if (Grid[x + 3][y] == 3 || Grid[x + 3][y] == 4) {
-                            return true;
-                        }
-                    }
-                    else if (Grid[x + 3][y] == 1) {
-                        return false;
-                    }
-                }
+    if (Grid[x + 1][y] == 3 || Grid[x + 1][y] == 4) {
+        if (Grid[x + 2][y] == 3 || Grid[x + 2][y] == 4) {
+            if (Grid[x + 3][y] == 3 || Grid[x + 3][y] == 4) {
+                return true;
             }
-            else if (Grid[x + 2][y] == 1) {
+            else if (Grid[x + 3][y] == 1) {
                 return false;
             }
+        }
+        else if (Grid[x + 2][y] == 1) {
+            return false;
         }
     }
     else if (Grid[x + 1][y] == 1) {
         return false;
     }
-    if (Grid[x - 1][y] != 1) {
-        if (Grid[x - 1][y] == 3 || Grid[x - 1][y] == 4) {
-            if (Grid[x - 2][y] != 1) {
-                if (Grid[x - 2][y] == 3 || Grid[x - 2][y] == 4) {
-                    if (Grid[x - 3][y] != 1) {
-                        if (Grid[x - 3][y] == 3 || Grid[x - 3][y] == 4) {
-                            return true;
-                        }
-                    }
-                    else if (Grid[x - 3][y] == 1) {
-                        return false;
-                    }
-                }
+
+    if (Grid[x - 1][y] == 3 || Grid[x - 1][y] == 4) {
+        if (Grid[x - 2][y] == 3 || Grid[x - 2][y] == 4) {
+            if (Grid[x - 3][y] == 3 || Grid[x - 3][y] == 4) {
+                return true;
             }
-            else if (Grid[x - 2][y] == 1) {
+            else if (Grid[x - 3][y] == 1) {
                 return false;
             }
+        }
+        else if (Grid[x - 2][y] == 1) {
+            return false;
         }
     }
     else if (Grid[x - 1][y] == 1) {
         return false;
     }
-    if (Grid[x][y + 1] != 1) {
-        if (Grid[x][y + 1] == 3 || Grid[x][y + 1] == 4) {
-            if (Grid[x][y + 2] != 1) {
-                if (Grid[x][y + 2] == 3 || Grid[x][y + 2] == 4) {
-                    if (Grid[x][y + 3] != 1) {
-                        if (Grid[x][y + 3] == 3 || Grid[x][y + 3] == 4) {
-                            return true;
-                        }
-                    }
-                    else if (Grid[x][y + 3] == 1) {
-                        return false;
-                    }
-                }
+
+    if (Grid[x][y + 1] == 3 || Grid[x][y + 1] == 4) {
+        if (Grid[x][y + 2] == 3 || Grid[x][y + 2] == 4) {
+            if (Grid[x][y + 3] == 3 || Grid[x][y + 3] == 4) {
+                return true;
             }
-            else if (Grid[x][y + 2] == 1) {
+            else if (Grid[x][y + 3] == 1) {
                 return false;
             }
+        }
+        else if (Grid[x][y + 2] == 1) {
+            return false;
         }
     }
     else if (Grid[x][y + 1] == 1) {
         return false;
     }
-    if (Grid[x][y - 1] != 1) {
-        if (Grid[x][y - 1] == 3 || Grid[x][y - 1] == 4) {
-            if (Grid[x][y - 2] != 1) {
-                if (Grid[x][y - 2] == 3 || Grid[x][y - 2] == 4) {
-                    if (Grid[x][y - 3] != 1) {
-                        if (Grid[x][y - 3] == 3 || Grid[x][y - 3] == 4) {
-                            return true;
-                        }
-                    }
-                    else if (Grid[x][y - 3] == 1) {
-                        return false;
-                    }
-                }
+
+    if (Grid[x][y - 1] == 3 || Grid[x][y - 1] == 4) {
+        if (Grid[x][y - 2] == 3 || Grid[x][y - 2] == 4) {
+            if (Grid[x][y - 3] == 3 || Grid[x][y - 3] == 4) {
+                return true;
             }
-            else if (Grid[x][y - 2] == 1) {
+            else if (Grid[x][y - 3] == 1) {
                 return false;
             }
+        }
+        else if (Grid[x][y - 2] == 1) {
+            return false;
         }
     }
     else if (Grid[x][y - 1] == 1) {
         return false;
     }
     return true;
+}
+
+int checkforHit(int Grid[size + 2][size + 2]) {
+    for (int x = 1; x < size + 1; x++) {
+        for (int y = 1; y < size + 1; y++) {
+            if (Grid[x][y] == 3) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+void computerHit(int Grid[size + 2][size + 2], int hits, int& x, int& y) {
+    x = rand() % size + 1;
+    y = rand() % size + 1;
+    if (hits == 1) {
+        while (1) {
+            x = rand() % size + 1;
+            y = rand() % size + 1;
+            if ((Grid[x][y] != 2 && Grid[x][y] != 3 && Grid[x][y] != 4) &&
+                (Grid[x + 1][y] == 3 || Grid[x - 1][y] == 3 || Grid[x][y + 1] == 3 || Grid[x][y - 1] == 3) &&
+                (Grid[x + 1][y + 1] != 3 && Grid[x - 1][y - 1] != 3 && Grid[x - 1][y + 1] != 3 && Grid[x + 1][y - 1] != 3)) {
+                break;
+            }
+        }
+    }
+    else if (hits == 0) {
+        while (Grid[x][y] == 2 || Grid[x][y] == 3 || Grid[x][y] == 4) { // не стрел€ем по уже открытым €чейкам
+            x = rand() % size + 1;
+            y = rand() % size + 1;
+        }
+    }
 }
