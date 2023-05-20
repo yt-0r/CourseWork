@@ -1,5 +1,10 @@
 #pragma once
-#include "Graphic.h"
+#pragma warning(disable:6385)
+#pragma warning(disable:6386)
+#pragma warning(disable:4244)
+#include <cmath>
+#include <ctime>
+#include "PublicVar.h"
 
 int Ship_placement(int b[size + 2][size + 2], int size);
 
@@ -13,4 +18,4 @@ int aroundHit(int Grid[size + 2][size + 2], int x, int y);
 
 int checkforHit(int Grid[size + 2][size + 2]);
 
-void computerHit(int Grid[size + 2][size + 2], int hits, int& x, int& y);
+int computerHit(int Grid[size + 2][size + 2], int hits, int& x, int& y);

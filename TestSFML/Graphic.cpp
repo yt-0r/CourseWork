@@ -419,7 +419,7 @@ int drawGrid(RenderWindow& window, int Gridp[size + 2][size + 2], int Gridc[size
     return 0;
 }
 
-int init() {
+int initGraphic() {
     if (!sea.loadFromFile("../resources/textures/sea.jpg")
         || !sand.loadFromFile("../resources/textures/sand.jpg")
         || !miss.loadFromFile("../resources/textures/miss.jpg")

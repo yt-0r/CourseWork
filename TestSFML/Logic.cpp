@@ -1,6 +1,4 @@
 #include "Logic.h"
-#pragma warning(disable:6385)
-#pragma warning(disable:6386)
 
 int Ship_placement(int b[size + 2][size + 2], int size)
 {
@@ -542,7 +540,7 @@ int checkforHit(int Grid[size + 2][size + 2]) {
     return 0;
 }
 
-void computerHit(int Grid[size + 2][size + 2], int hits, int& x, int& y) {
+int computerHit(int Grid[size + 2][size + 2], int hits, int& x, int& y) {
     x = rand() % size + 1;
     y = rand() % size + 1;
     if (hits == 1) {
@@ -555,11 +553,18 @@ void computerHit(int Grid[size + 2][size + 2], int hits, int& x, int& y) {
                 break;
             }
         }
+        if (x > 10 || x < 1 || y > 10 || y < 1) {
+            return 1;
+        }
     }
     else if (hits == 0) {
         while (Grid[x][y] == 2 || Grid[x][y] == 3 || Grid[x][y] == 4) { // не стрел€ем по уже открытым €чейкам
             x = rand() % size + 1;
             y = rand() % size + 1;
         }
+        if (x > 10 || x < 1 || y > 10 || y < 1) {
+            return 1;
+        }
     }
+    return 0;
 }

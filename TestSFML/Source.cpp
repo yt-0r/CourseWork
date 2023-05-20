@@ -1,12 +1,7 @@
-#pragma warning(disable:4244)
-#pragma warning(disable:6385)
-#include <Graphics.hpp>
-#include <Audio.hpp>
 #include <iostream>
-#include <cmath>
-#include <ctime>
 #include "Logic.h"
 #include "Graphic.h"
+#include "Audio.h"
 
 using namespace sf;
 
@@ -16,15 +11,7 @@ bool isPaused = 0;
 
 bool isPlayerTurn = true; // ход игрока
 
-Sound shoot;
-SoundBuffer buffer;
-
 int main() {
-
-    if (!buffer.loadFromFile("../resources/sfx/shoot.wav")) {
-        return 1;
-    }
-    shoot.setBuffer(buffer);
 
     int playerGrid[size + 2][size + 2]; // игровое поле игрока
     int computerGrid[size + 2][size + 2]; // игровое поле компьютера
@@ -38,7 +25,7 @@ int main() {
         return 1;
     }
 
-    if (init() != 0) {
+    if (initGraphic() != 0 || initAudio()) {
         return 1;
     }
 
@@ -60,13 +47,13 @@ int main() {
                     computerGrid[x][y] = 3;
                     win += 1;
                     isPaused = 1;
-                    shoot.play();
+                    ShootingSound();
                 }
                 else if (computerGrid[x][y] == 0) { // промах
                     computerGrid[x][y] = 2;
                     isPlayerTurn = false;
                     isPaused = 1;
-                    shoot.play();
+                    ShootingSound();
                 }
             }
         }
@@ -104,13 +91,13 @@ int main() {
                 playerGrid[x][y] = 3;
                 lose += 1;
                 isPaused = 1;
-                shoot.play();
+                ShootingSound();
             }
             else { // промах
                 playerGrid[x][y] = 2;
                 isPlayerTurn = true;
                 isPaused = 1;
-                shoot.play();
+                ShootingSound();
             }
 
         }
